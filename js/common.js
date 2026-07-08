@@ -199,7 +199,8 @@ function injectShellLayout(activePage) {
         'xero_cash': { title: 'Cash Position by Account', file: 'xero_1_ntt_cash_position.html', icon: 'fa-solid fa-money-check-dollar' },
         'xero_payments': { title: 'Payments by Month', file: 'xero_2_ntt_payments_by_month.html', icon: 'fa-solid fa-calendar-days' },
         'xero_lot': { title: 'Lot-level Revenue', file: 'xero_3_ntt_lot_revenue.html', icon: 'fa-solid fa-house-chimney' },
-        'xero_aging': { title: 'AP / AR Aging', file: 'xero_4_ntt_ap_ar_aging.html', icon: 'fa-solid fa-clock-rotate-left' }
+        'xero_aging': { title: 'AP / AR Aging', file: 'xero_4_ntt_ap_ar_aging.html', icon: 'fa-solid fa-clock-rotate-left' },
+        'xero_balancesheet': { title: 'Balance Sheet', file: 'ntt_balance_sheet.html', icon: 'fa-solid fa-scale-balanced' },
     };
     
     const ESTATE_PAGES = {
