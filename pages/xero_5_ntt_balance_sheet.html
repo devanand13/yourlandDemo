@@ -1,475 +1,351 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Balance Sheet Trend &mdash; NTT Property Development</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tabler-icons/2.44.0/iconfont/tabler-icons.min.css">
-<style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Balance Sheet Trend - YourLand Dashboard</title>
 
-:root{
-  --ink:#1B1B23; --ink-soft:#3A3A44; --paper:#FAFAF9;
-  --surface-0:#EDEDED; --surface-1:#F3F3F2; --surface-2:#FFFFFF;
-  --border:#E3E3E2; --border-strong:#C9C9C9; --muted:#69727D;
-  --brass:#FF8600; --brass-soft:#FFE7CC;
-  --forest:#2E6B4F; --forest-soft:#E7F0EA;
-  --amber:#D9691E; --amber-soft:#FDE9DA;
-  --rust:#B0492E; --rust-soft:#F6E7E1;
-  --rust-dark:#7A2E1C; --rust-dark-soft:#F1DDD6;
-  --radius:10px; --radius-lg:16px;
-  --shadow:0 1px 2px rgba(27,27,35,.05), 0 6px 20px -8px rgba(27,27,35,.12);
-  --font-display:'Fraunces', Georgia, serif;
-  --font-sans:'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-mono:'IBM Plex Mono', ui-monospace, monospace;
-  --nav-h:64px;
-}
+    <!-- CDNs -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.36.0/tabler-icons.min.css" rel="stylesheet">
 
+    <!-- CSS styles -->
+    <link href="../css/style.css" rel="stylesheet">
+    <link href="../css/components.css" rel="stylesheet">
 
-*{box-sizing:border-box;margin:0;padding:0}
-html,body{background:var(--paper);}
-body{font-family:var(--font-sans);color:var(--ink);-webkit-font-smoothing:antialiased;}
+    <style>
+    .wrap{padding:0.5rem 0;font-family:var(--font-sans)}
+    .topbar{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:1.25rem;gap:12px;padding-bottom:1rem;border-bottom:0.5px solid var(--border)}
+    .t1{font-size:18px;font-weight:500;color:var(--text-primary)}
+    .t2{font-size:13px;color:var(--text-muted);margin-top:3px}
+    .badge{font-size:11px;color:var(--text-muted);border:0.5px solid var(--border);border-radius:20px;padding:4px 12px;white-space:nowrap;flex-shrink:0}
+    .proj-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1.5rem;align-items:center}
+    .proj-lbl{font-size:12px;color:var(--text-muted);margin-right:4px}
+    select{font-size:12px;font-family:var(--font-sans);font-weight:600;padding:6px 30px 6px 12px;border-radius:20px;border:0.5px solid var(--border-strong);background:var(--surface-1);color:var(--text-primary);cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23898781' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center}
+    .kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:1.5rem}
+    .kpi{background:var(--surface-1);border-radius:var(--radius);padding:14px 16px;border:0.5px solid var(--border)}
+    .kpi-l{font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px}
+    .kpi-v{font-size:22px;font-weight:500;color:var(--text-primary);font-variant-numeric:tabular-nums}
+    .kpi-v.ok{color:#2E6B4F}
+    .kpi-v.warn{color:#D9691E}
+    .kpi-v.danger{color:#B0492E}
+    .kpi-sub{font-size:11px;color:var(--text-muted);margin-top:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .kpi-sub.pos{color:#2E6B4F}
+    .kpi-sub.neg{color:#B0492E}
+    .legend{display:flex;gap:16px;margin-bottom:10px;flex-wrap:wrap}
+    .leg{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text-secondary)}
+    .leg-sq{width:10px;height:10px;border-radius:2px;flex-shrink:0}
+    .chart-box{position:relative;width:100%;height:260px;margin-bottom:1.5rem}
+    .section-l{font-size:11px;font-weight:500;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px}
+    .tbl-scroll{overflow-x:auto}
+    table{width:100%;min-width:1080px;border-collapse:collapse;font-size:12.5px;table-layout:fixed}
+    colgroup col:first-child{width:210px}
+    th{font-size:10px;font-weight:600;color:var(--text-muted);text-align:right;padding:12px 12px 11px;border-bottom:0.5px solid var(--border-strong);white-space:nowrap;text-transform:uppercase;letter-spacing:.04em;background:var(--surface-1)}
+    th:first-child{text-align:left}
+    td{padding:9px 12px;text-align:right;border-bottom:0.5px solid var(--border);color:var(--text-primary);white-space:nowrap;font-variant-numeric:tabular-nums;overflow:hidden;text-overflow:ellipsis}
+    td:first-child{text-align:left;overflow:hidden;text-overflow:ellipsis}
+    td.neg{color:#B0492E}
+    tr.category td{background:#1B1B23;color:#F1EEE5;font-size:12px;font-weight:700;padding:10px 12px;letter-spacing:.03em;text-transform:uppercase}
+    tr.grp td{background:var(--surface-1);font-size:11.5px;font-weight:600;color:var(--text-secondary);padding:8px 12px;border-bottom:0.5px solid var(--border-strong)}
+    tr.sub td{font-weight:600;border-top:0.5px solid var(--border-strong);background:var(--surface-1)}
+    tr.grand td{font-weight:700;background:#FFE7CC;color:#1B1B23;border-top:2px solid #FF8600;font-size:13px}
+    tr:hover td{background:rgba(166,124,61,0.045)}
+    tr.category:hover td,tr.grp:hover td,tr.sub:hover td,tr.grand:hover td{background-color:inherit}
+    tr:last-child td{border-bottom:none}
 
-.app-nav{
-  display:flex;align-items:center;gap:14px;
-  height:var(--nav-h);padding:0 28px;
-  background:var(--surface-2);
-  border-bottom:1px solid var(--border);
-}
-.app-logo{height:26px;width:auto;display:block;}
-.app-nav-div{width:1px;height:26px;background:var(--border-strong);}
-.app-nav-title{font-family:var(--font-mono);font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);font-weight:500;}
-
-.wrap{max-width:1180px;margin:0 auto;padding:2.75rem 1.75rem 3.5rem;}
-
-.topbar{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;margin-bottom:1.6rem;padding-bottom:1.5rem;border-bottom:1px solid var(--border);position:relative;}
-.topbar::after{content:"";position:absolute;left:0;bottom:-1px;width:64px;height:2px;background:var(--brass);}
-.eyebrow{font-family:var(--font-mono);font-size:11px;letter-spacing:.11em;text-transform:uppercase;color:var(--brass);margin-bottom:8px;font-weight:500;}
-.t1{font-family:var(--font-display);font-size:29px;font-weight:500;color:var(--ink);letter-spacing:-.01em;display:flex;align-items:center;gap:11px;}
-.t1 .ti{font-size:22px;color:var(--brass);}
-.t2{font-size:13px;color:var(--muted);margin-top:7px;font-weight:400}
-.t2 b{color:var(--ink-soft);font-weight:600}
-.badge{font-family:var(--font-mono);font-size:10.5px;color:var(--muted);border:1px solid var(--border-strong);border-radius:20px;padding:5px 13px;white-space:nowrap;letter-spacing:.03em;background:var(--surface-2);align-self:flex-start}
-
-.proj-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:1.9rem;align-items:center}
-.proj-lbl{font-family:var(--font-mono);font-size:11px;color:var(--muted);margin-right:2px;letter-spacing:.03em;text-transform:uppercase;}
-.proj-select{
-  font-family:var(--font-sans);font-size:13px;font-weight:600;color:var(--ink);
-  padding:8px 36px 8px 14px;border-radius:20px;border:1px solid var(--border-strong);
-  background:var(--surface-2) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%2369727D' stroke-width='1.5' fill='none' fill-rule='evenodd'/%3E%3C/svg%3E") no-repeat right 14px center;
-  cursor:pointer;appearance:none;-webkit-appearance:none;-moz-appearance:none;
-  transition:border-color .12s;
-}
-.proj-select:hover{border-color:var(--brass)}
-.proj-select:focus{outline:none;border-color:var(--brass)}
-
-.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:2rem}
-.kpi{background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px 20px;box-shadow:var(--shadow);border-top:2.5px solid var(--brass);}
-.kpi-l{font-family:var(--font-mono);font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.09em;margin-bottom:9px;font-weight:500;}
-.kpi-v{font-family:var(--font-display);font-size:23px;font-weight:500;color:var(--ink);font-variant-numeric:tabular-nums;letter-spacing:-.01em;white-space:nowrap;}
-.kpi-v.ok{color:var(--forest)}
-.kpi-v.warn{color:var(--amber)}
-.kpi-v.danger{color:var(--rust)}
-.kpi-sub{font-family:var(--font-mono);font-size:10.5px;color:var(--muted);margin-top:7px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.kpi-sub.pos{color:var(--forest)}
-.kpi-sub.neg{color:var(--rust)}
-
-.legend{display:flex;gap:18px;margin-bottom:12px;flex-wrap:wrap}
-.leg{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--ink-soft);font-weight:500}
-.leg-sq{width:9px;height:9px;border-radius:3px;flex-shrink:0}
-.chart-box{position:relative;width:100%;height:260px;margin-bottom:1.7rem;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px 16px 8px;box-shadow:var(--shadow);}
-
-.section-l{font-family:var(--font-mono);font-size:10.5px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.09em;margin-bottom:12px;display:flex;align-items:center;gap:9px;}
-.section-l::after{content:"";flex:1;height:1px;background:var(--border);}
-
-.tbl-scroll{overflow-x:auto;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow);}
-table{width:100%;min-width:1080px;border-collapse:collapse;font-size:12.5px;table-layout:fixed}
-colgroup col:first-child{width:210px}
-th{font-family:var(--font-sans);font-size:10px;font-weight:600;color:var(--muted);text-align:right;padding:12px 12px 11px;border-bottom:1px solid var(--border-strong);white-space:nowrap;text-transform:uppercase;letter-spacing:.04em;background:var(--surface-1);}
-th:first-child{text-align:left}
-td{padding:9px 12px;text-align:right;border-bottom:1px solid var(--border);color:var(--ink);white-space:nowrap;font-family:var(--font-mono);font-variant-numeric:tabular-nums;overflow:hidden;text-overflow:ellipsis;}
-td:first-child{text-align:left;font-family:var(--font-sans);overflow:hidden;text-overflow:ellipsis;}
-td.neg{color:var(--rust)}
-tr.category td{background:var(--ink);color:#F1EEE5;font-family:var(--font-sans);font-size:12px;font-weight:700;padding:10px 12px;letter-spacing:.03em;text-transform:uppercase;}
-tr.grp td{background:var(--surface-1);font-family:var(--font-sans);font-size:11.5px;font-weight:600;color:var(--ink-soft);padding:8px 12px;border-bottom:1px solid var(--border-strong);}
-tr.sub td{font-weight:600;border-top:1px solid var(--border-strong);background:var(--surface-1)}
-tr.sub td:first-child{font-family:var(--font-sans)}
-tr.grand td{font-weight:700;background:var(--brass-soft);color:var(--ink);border-top:2px solid var(--brass);font-size:13px}
-tr.grand td:first-child{font-family:var(--font-sans)}
-tr:hover td{background:rgba(166,124,61,0.045)}
-tr.category:hover td,tr.grp:hover td,tr.sub:hover td,tr.grand:hover td{background-color:inherit}
-tr:last-child td{border-bottom:none}
-
-@media (max-width:760px){
-  .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .topbar{flex-direction:column;align-items:flex-start}
-}
-
-</style>
+    @media (max-width:760px){
+      .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+      .topbar{flex-direction:column;align-items:flex-start}
+    }
+    </style>
 </head>
 <body>
-<nav class="app-nav">
-  <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="app-logo" height="26" viewBox="0 0 178.23 35.737">
-  <defs>
-    <clipPath id="clip-path">
-      <path id="Path_13" data-name="Path 13" d="M0-9.164H178.23V-44.9H0Z" transform="translate(0 44.901)" fill="none"></path>
-    </clipPath>
-  </defs>
-  <g id="Group_25" data-name="Group 25" transform="translate(0 44.901)">
-    <g id="Group_13" data-name="Group 13" transform="translate(0 -44.901)" clip-path="url(#clip-path)">
-      <g id="Group_1" data-name="Group 1" transform="translate(16.567 4.692)">
-        <path id="Path_1" data-name="Path 1" d="M-2.858,0H-8.61A5.4,5.4,0,0,0-14,5.391v5.752a5.4,5.4,0,0,0,5.391,5.4h5.752a5.4,5.4,0,0,0,5.391-5.4V5.391A5.4,5.4,0,0,0-2.858,0m1.8,11.143a1.8,1.8,0,0,1-1.8,1.8H-8.61a1.8,1.8,0,0,1-1.8-1.8V5.391a1.8,1.8,0,0,1,1.8-1.8h5.752a1.8,1.8,0,0,1,1.8,1.8Z" transform="translate(14.001)" fill="#ff8600"></path>
-      </g>
-      <g id="Group_2" data-name="Group 2" transform="translate(53.986 4.693)">
-        <path id="Path_2" data-name="Path 2" d="M0-1.383V9.237a.506.506,0,0,0,.505.505H3.09a.505.505,0,0,0,.5-.505V-1.383a1.8,1.8,0,0,1,1.8-1.8h6.146a.506.506,0,0,0,.505-.505V-6.269a.506.506,0,0,0-.505-.505H5.391A5.4,5.4,0,0,0,0-1.383" transform="translate(0 6.774)" fill="#ff8600"></path>
-      </g>
-      <g id="Group_3" data-name="Group 3" transform="translate(68.689 0)">
-        <path id="Path_3" data-name="Path 3" d="M-.922-4.057V-19.37a.506.506,0,0,0-.505-.505H-4.011a.506.506,0,0,0-.505.505V-4.057A5.391,5.391,0,0,0,.875,1.335H7.381a.505.505,0,0,0,.505-.5V-1.754a.506.506,0,0,0-.505-.505H.875a1.8,1.8,0,0,1-1.8-1.8" transform="translate(4.516 19.875)" fill="#ff8600"></path>
-      </g>
-      <g id="Group_4" data-name="Group 4" transform="translate(35.063 4.7)">
-        <path id="Path_4" data-name="Path 4" d="M-3.318-2.856a1.8,1.8,0,0,1-1.8,1.8h-5.752a1.8,1.8,0,0,1-1.8-1.8V-13.487a.506.506,0,0,0-.505-.505h-2.585a.5.5,0,0,0-.5.505V-2.856a5.39,5.39,0,0,0,5.391,5.391h5.752A5.391,5.391,0,0,0,.276-2.856V-13.487a.506.506,0,0,0-.505-.505H-2.813a.506.506,0,0,0-.505.505Z" transform="translate(16.258 13.992)" fill="#ff8600"></path>
-      </g>
-      <g id="Group_5" data-name="Group 5" transform="translate(101.299 4.692)">
-        <path id="Path_5" data-name="Path 5" d="M-2.858,0H-8.61A5.391,5.391,0,0,0-14,5.391V16.015a.505.505,0,0,0,.505.5h2.584a.5.5,0,0,0,.5-.5V5.391a1.8,1.8,0,0,1,1.8-1.8h5.752a1.8,1.8,0,0,1,1.8,1.8V16.015a.5.5,0,0,0,.505.5H2.029a.5.5,0,0,0,.5-.5V5.391A5.4,5.4,0,0,0-2.858,0" transform="translate(14.001)" fill="#ff8600"></path>
-      </g>
-      <g id="Group_6" data-name="Group 6" transform="translate(82.393 4.7)">
-        <path id="Path_6" data-name="Path 6" d="M-3.12,0h-9.863a.5.5,0,0,0-.5.5V3.089a.505.505,0,0,0,.5.505H-3.12a.776.776,0,0,1,.776.78V5.637H-9.633a5.6,5.6,0,0,0-5.582,4.586,5.4,5.4,0,0,0,5.321,6.29h5.752a5.4,5.4,0,0,0,5.4-5.4V4.37A4.378,4.378,0,0,0-3.12,0m.776,11.117a1.8,1.8,0,0,1-1.8,1.8H-9.893a1.8,1.8,0,0,1-1.8-1.8A1.889,1.889,0,0,1-9.8,9.231h7.46Z" transform="translate(15.286)" fill="#ff8600"></path>
-      </g>
-      <g id="Group_7" data-name="Group 7" transform="translate(120.263 0)">
-        <path id="Path_7" data-name="Path 7" d="M-3.319-.13V4.349a5.342,5.342,0,0,0-1.8-.309h-5.752A5.392,5.392,0,0,0-16.26,9.432v5.751a5.391,5.391,0,0,0,5.392,5.391h5.752A5.391,5.391,0,0,0,.276,15.183V-.13A.506.506,0,0,0-.23-.635H-2.814a.505.505,0,0,0-.5.505m0,15.313a1.8,1.8,0,0,1-1.8,1.8h-5.752a1.8,1.8,0,0,1-1.8-1.8V9.432a1.8,1.8,0,0,1,1.8-1.8h5.752a1.8,1.8,0,0,1,1.8,1.8v5.751Z" transform="translate(16.26 0.635)" fill="#ff8600"></path>
-      </g>
-      <g id="Group_8" data-name="Group 8" transform="translate(0 0.022)">
-        <path id="Path_8" data-name="Path 8" d="M-3.916-.053-9.6,7.808-15.278-.053a.513.513,0,0,0-.408-.208H-18.8a.388.388,0,0,0-.315.616l7.664,10.564v9.506a.505.505,0,0,0,.505.5h2.685a.505.505,0,0,0,.505-.5V10.863L-.087.355A.388.388,0,0,0-.4-.261H-3.507a.512.512,0,0,0-.408.208" transform="translate(19.185 0.261)" fill="#ff8600"></path>
-      </g>
-      <g id="Group_9" data-name="Group 9" transform="translate(152.114 7.397)">
-        <path id="Path_9" data-name="Path 9" d="M-3.992-2.824a2.519,2.519,0,0,1-1.788.741,2.518,2.518,0,0,1-1.785-.741L-18.373-13.631a.692.692,0,0,0-.491-.2.694.694,0,0,0-.7.7.692.692,0,0,0,.2.491L-8.577-1.865A2.519,2.519,0,0,1-7.838-.076V12.188a.2.2,0,0,0,.195.2H5.927a.525.525,0,0,0,.523-.524V-12.8a.2.2,0,0,0-.332-.136Z" transform="translate(19.561 13.834)" fill="#ff8600"></path>
-      </g>
-      <g id="Group_10" data-name="Group 10" transform="translate(144.498 0)">
-        <path id="Path_10" data-name="Path 10" d="M-.133-8.62H13.44a.194.194,0,0,0,.193-.192V-20.032L3.592-30.076A5.868,5.868,0,0,1,2.6-37,4.951,4.951,0,0,1,4.96-39.275a5.862,5.862,0,0,1,6.764,1.07l9.019,9.018L32.929-41.377a.5.5,0,0,0-.353-.856H-.133a.523.523,0,0,0-.521.524V-9.14a.52.52,0,0,0,.521.521" transform="translate(0.654 42.233)" fill="#ff8600"></path>
-      </g>
-      <g id="Group_11" data-name="Group 11" transform="translate(68.689 25.918)">
-        <path id="Path_11" data-name="Path 11" d="M-.7-1.753a4.252,4.252,0,0,0,.43-.029,2.471,2.471,0,0,0,.551-.128,2.453,2.453,0,0,0,.575-.3,1.933,1.933,0,0,0,.513-.527,2.976,2.976,0,0,0,.371-.835,4.424,4.424,0,0,0,.145-1.214,5.151,5.151,0,0,0-.135-1.234,2.367,2.367,0,0,0-.44-.925,1.966,1.966,0,0,0-.794-.584,3.19,3.19,0,0,0-1.2-.2H-2.4v5.971ZM-.785-8.587a3.836,3.836,0,0,1,2.737.907,3.622,3.622,0,0,1,.959,2.758A6.243,6.243,0,0,1,2.694-3.2a3.215,3.215,0,0,1-.668,1.259,2.907,2.907,0,0,1-1.153.782,4.609,4.609,0,0,1-1.659.27H-3.427v-7.7Z" transform="translate(3.427 8.587)" fill="#ff8600"></path>
-      </g>
-      <g id="Group_12" data-name="Group 12" transform="translate(75.823 27.913)">
-        <path id="Path_12" data-name="Path 12" d="M-1.032-.453a1.534,1.534,0,0,0-.334-.5,1.578,1.578,0,0,0-.5-.334,1.573,1.573,0,0,0-.63-.126,1.611,1.611,0,0,0-.642.126,1.484,1.484,0,0,0-.49.34,1.638,1.638,0,0,0-.322.5,1.9,1.9,0,0,0-.14.61h3.2a1.841,1.841,0,0,0-.145-.614m.221,3.578A2.53,2.53,0,0,1-2.384,3.6a2.855,2.855,0,0,1-1.16-.216,2.275,2.275,0,0,1-.824-.6,2.517,2.517,0,0,1-.5-.926A4.463,4.463,0,0,1-5.058.678,3.347,3.347,0,0,1-4.864-.487,2.764,2.764,0,0,1-4.319-1.4a2.464,2.464,0,0,1,.83-.6,2.539,2.539,0,0,1,1.051-.215,2.306,2.306,0,0,1,1.234.3,2.467,2.467,0,0,1,.786.782A3.1,3.1,0,0,1-.008-.1,4.464,4.464,0,0,1,.083.968h-4.17a2.185,2.185,0,0,0,.086.7,1.569,1.569,0,0,0,.312.581,1.532,1.532,0,0,0,.55.4,1.892,1.892,0,0,0,.787.151,1.585,1.585,0,0,0,.953-.27,1.3,1.3,0,0,0,.489-.819H0A2.233,2.233,0,0,1-.811,3.125" transform="translate(5.058 2.221)" fill="#ff8600"></path>
-      </g>
-    </g>
-    <g id="Group_14" data-name="Group 14" transform="translate(81.373 -16.859)">
-      <path id="Path_14" data-name="Path 14" d="M-.531-1.429-2.6-7h1.024L-.013-2.356H.009L1.528-7h.958L.451-1.429Z" transform="translate(2.6 7.001)" fill="#ff8600"></path>
-    </g>
-    <g id="Group_16" data-name="Group 16" transform="translate(0 -44.901)" clip-path="url(#clip-path)">
-      <g id="Group_15" data-name="Group 15" transform="translate(86.999 27.913)">
-        <path id="Path_15" data-name="Path 15" d="M-1.032-.453a1.521,1.521,0,0,0-.334-.5,1.578,1.578,0,0,0-.5-.334,1.573,1.573,0,0,0-.63-.126,1.6,1.6,0,0,0-.641.126,1.476,1.476,0,0,0-.49.34,1.626,1.626,0,0,0-.323.5,1.9,1.9,0,0,0-.14.61h3.2a1.841,1.841,0,0,0-.145-.614m.221,3.578A2.53,2.53,0,0,1-2.384,3.6a2.855,2.855,0,0,1-1.16-.216,2.275,2.275,0,0,1-.824-.6,2.517,2.517,0,0,1-.5-.926A4.464,4.464,0,0,1-5.057.678,3.347,3.347,0,0,1-4.864-.487,2.764,2.764,0,0,1-4.319-1.4a2.464,2.464,0,0,1,.83-.6,2.539,2.539,0,0,1,1.051-.215,2.306,2.306,0,0,1,1.234.3,2.467,2.467,0,0,1,.786.782A3.114,3.114,0,0,1-.008-.1,4.507,4.507,0,0,1,.084.968h-4.17a2.185,2.185,0,0,0,.086.7,1.559,1.559,0,0,0,.313.581,1.519,1.519,0,0,0,.55.4,1.886,1.886,0,0,0,.786.151,1.585,1.585,0,0,0,.953-.27,1.3,1.3,0,0,0,.489-.819H0A2.233,2.233,0,0,1-.811,3.125" transform="translate(5.057 2.221)" fill="#ff8600"></path>
-      </g>
-    </g>
-    <path id="Path_17" data-name="Path 17" d="M117.943-4.641h-.915v-7.7h.915Z" transform="translate(-23.886 -6.646)" fill="#ff8600"></path>
-    <g id="Group_24" data-name="Group 24" transform="translate(0 -44.901)" clip-path="url(#clip-path)">
-      <g id="Group_17" data-name="Group 17" transform="translate(95.18 27.912)">
-        <path id="Path_18" data-name="Path 18" d="M-.283-.979a1.878,1.878,0,0,0,.372.658,1.584,1.584,0,0,0,.555.4,1.628,1.628,0,0,0,.674.142A1.635,1.635,0,0,0,1.992.082a1.576,1.576,0,0,0,.555-.4,1.866,1.866,0,0,0,.372-.658,2.755,2.755,0,0,0,.135-.9,2.776,2.776,0,0,0-.135-.9,1.951,1.951,0,0,0-.372-.662,1.563,1.563,0,0,0-.555-.409,1.674,1.674,0,0,0-.673-.142,1.667,1.667,0,0,0-.674.142,1.57,1.57,0,0,0-.555.409,1.964,1.964,0,0,0-.372.662,2.777,2.777,0,0,0-.134.9,2.755,2.755,0,0,0,.134.9m-.932-2.045A2.586,2.586,0,0,1-.7-3.954a2.441,2.441,0,0,1,.851-.619A2.825,2.825,0,0,1,1.318-4.8a2.817,2.817,0,0,1,1.169.226,2.475,2.475,0,0,1,.846.619,2.571,2.571,0,0,1,.517.929,3.682,3.682,0,0,1,.172,1.146A3.646,3.646,0,0,1,3.85-.735a2.58,2.58,0,0,1-.517.92A2.383,2.383,0,0,1,2.487.8a2.9,2.9,0,0,1-1.169.221A2.9,2.9,0,0,1,.154.8,2.352,2.352,0,0,1-.7.185a2.6,2.6,0,0,1-.518-.92,3.669,3.669,0,0,1-.172-1.144,3.706,3.706,0,0,1,.172-1.146" transform="translate(1.387 4.799)" fill="#ff8600"></path>
-      </g>
-      <g id="Group_18" data-name="Group 18" transform="translate(101.699 27.912)">
-        <path id="Path_19" data-name="Path 19" d="M-1.079-.54A2.039,2.039,0,0,0-1.392-1.2a1.487,1.487,0,0,0-.539-.462,1.619,1.619,0,0,0-.77-.175,1.562,1.562,0,0,0-.786.185,1.556,1.556,0,0,0-.528.478,2.04,2.04,0,0,0-.3.674A3.22,3.22,0,0,0-4.4.262a3.222,3.222,0,0,0,.1.792A1.954,1.954,0,0,0-4,1.727a1.56,1.56,0,0,0,.544.47,1.714,1.714,0,0,0,.809.177,1.581,1.581,0,0,0,.793-.183,1.494,1.494,0,0,0,.511-.485,2.114,2.114,0,0,0,.281-.689,3.685,3.685,0,0,0,.085-.8,2.806,2.806,0,0,0-.1-.758M-4.371-2.519v.755h.021a1.371,1.371,0,0,1,.712-.674,2.635,2.635,0,0,1,1.067-.21,2.53,2.53,0,0,1,1.126.236,2.308,2.308,0,0,1,.8.643,2.812,2.812,0,0,1,.479.93A3.8,3.8,0,0,1-.005.282,3.911,3.911,0,0,1-.163,1.4a2.635,2.635,0,0,1-.474.922,2.26,2.26,0,0,1-.8.62,2.584,2.584,0,0,1-1.116.225,2.892,2.892,0,0,1-.459-.043,2.638,2.638,0,0,1-.5-.138,2.026,2.026,0,0,1-.468-.265A1.466,1.466,0,0,1-4.35,2.31h-.021V5.176h-.916V-2.519Z" transform="translate(5.287 2.648)" fill="#ff8600"></path>
-      </g>
-      <g id="Group_19" data-name="Group 19" transform="translate(108.059 27.913)">
-        <path id="Path_20" data-name="Path 20" d="M-.221-.033V.788H-.2A2.024,2.024,0,0,1,1.6-.161a2.017,2.017,0,0,1,.937.216A1.206,1.206,0,0,1,3.13.788a1.961,1.961,0,0,1,.739-.7A2.1,2.1,0,0,1,4.876-.161a2.9,2.9,0,0,1,.759.092,1.524,1.524,0,0,1,.583.286,1.268,1.268,0,0,1,.376.5,1.818,1.818,0,0,1,.135.738V5.539H5.814V1.888A2.688,2.688,0,0,0,5.77,1.4a.974.974,0,0,0-.162-.393.814.814,0,0,0-.33-.265,1.32,1.32,0,0,0-.543-.1,1.452,1.452,0,0,0-1.067.388,1.4,1.4,0,0,0-.388,1.035v3.47H2.365V1.888a2.288,2.288,0,0,0-.049-.5A1.026,1.026,0,0,0,2.149,1,.773.773,0,0,0,1.832.738,1.216,1.216,0,0,0,1.32.646,1.368,1.368,0,0,0,.635.808,1.588,1.588,0,0,0,.172,1.2a1.571,1.571,0,0,0-.259.471,1.318,1.318,0,0,0-.08.4v3.47h-.915V-.033Z" transform="translate(1.083 0.161)" fill="#ff8600"></path>
-      </g>
-      <g id="Group_20" data-name="Group 20" transform="translate(116.949 27.913)">
-        <path id="Path_21" data-name="Path 21" d="M-1.032-.453a1.521,1.521,0,0,0-.334-.5,1.578,1.578,0,0,0-.5-.334,1.573,1.573,0,0,0-.63-.126,1.6,1.6,0,0,0-.641.126,1.468,1.468,0,0,0-.49.34,1.626,1.626,0,0,0-.323.5,1.9,1.9,0,0,0-.14.61h3.2a1.841,1.841,0,0,0-.145-.614m.221,3.578A2.53,2.53,0,0,1-2.384,3.6a2.855,2.855,0,0,1-1.16-.216,2.275,2.275,0,0,1-.824-.6,2.517,2.517,0,0,1-.5-.926A4.463,4.463,0,0,1-5.058.678,3.347,3.347,0,0,1-4.864-.487,2.764,2.764,0,0,1-4.319-1.4a2.464,2.464,0,0,1,.83-.6,2.539,2.539,0,0,1,1.051-.215,2.306,2.306,0,0,1,1.234.3,2.467,2.467,0,0,1,.786.782A3.114,3.114,0,0,1-.008-.1,4.464,4.464,0,0,1,.083.968h-4.17a2.185,2.185,0,0,0,.086.7,1.559,1.559,0,0,0,.313.581,1.522,1.522,0,0,0,.549.4,1.892,1.892,0,0,0,.787.151,1.585,1.585,0,0,0,.953-.27,1.3,1.3,0,0,0,.489-.819H0A2.233,2.233,0,0,1-.811,3.125" transform="translate(5.058 2.221)" fill="#ff8600"></path>
-      </g>
-      <g id="Group_21" data-name="Group 21" transform="translate(123.039 27.913)">
-        <path id="Path_22" data-name="Path 22" d="M-.221-.033V.851H-.2A1.928,1.928,0,0,1,1.61-.161a2.422,2.422,0,0,1,.916.151A1.5,1.5,0,0,1,3.119.41a1.577,1.577,0,0,1,.318.642,3.416,3.416,0,0,1,.092.822V5.539H2.613V1.769a1.1,1.1,0,0,0-.3-.82,1.125,1.125,0,0,0-.83-.3A1.83,1.83,0,0,0,.753.777a1.364,1.364,0,0,0-.512.365A1.614,1.614,0,0,0-.066,1.7a2.271,2.271,0,0,0-.1.7V5.539h-.914V-.033Z" transform="translate(1.083 0.161)" fill="#ff8600"></path>
-      </g>
-      <g id="Group_22" data-name="Group 22" transform="translate(128.436 26.37)">
-        <path id="Path_23" data-name="Path 23" d="M-.763-.428v.81h-1.11V3.841a.968.968,0,0,0,.027.257.275.275,0,0,0,.1.152.444.444,0,0,0,.209.069,3.121,3.121,0,0,0,.351.018h.42v.807h-.7a3.2,3.2,0,0,1-.61-.049.883.883,0,0,1-.409-.177.755.755,0,0,1-.232-.367,2.112,2.112,0,0,1-.076-.626V.382h-.948v-.81h.948V-2.1h.917V-.428Z" transform="translate(3.738 2.099)" fill="#ff8600"></path>
-      </g>
-      <g id="Group_23" data-name="Group 23" transform="translate(132.068 27.913)">
-        <path id="Path_24" data-name="Path 24" d="M-.271-1.143a.994.994,0,0,0,.339.334,1.521,1.521,0,0,0,.474.177,2.668,2.668,0,0,0,.544.055A3.142,3.142,0,0,0,1.54-.611a1.615,1.615,0,0,0,.436-.119A.807.807,0,0,0,2.3-.981a.684.684,0,0,0,.13-.427.611.611,0,0,0-.27-.539,2.3,2.3,0,0,0-.673-.3c-.27-.075-.563-.145-.879-.206a4.479,4.479,0,0,1-.878-.257,1.825,1.825,0,0,1-.673-.47,1.213,1.213,0,0,1-.27-.84,1.332,1.332,0,0,1,.189-.722,1.534,1.534,0,0,1,.484-.489,2.2,2.2,0,0,1,.669-.28A3.035,3.035,0,0,1,.872-5.6a4.385,4.385,0,0,1,.872.08,2.054,2.054,0,0,1,.706.28,1.466,1.466,0,0,1,.49.54,2.03,2.03,0,0,1,.215.846H2.24A.934.934,0,0,0,2.1-4.3a.935.935,0,0,0-.3-.286,1.4,1.4,0,0,0-.4-.157,2.212,2.212,0,0,0-.447-.049,2.844,2.844,0,0,0-.415.033,1.353,1.353,0,0,0-.382.113.768.768,0,0,0-.28.216.542.542,0,0,0-.108.349.509.509,0,0,0,.168.393,1.327,1.327,0,0,0,.424.259,3.752,3.752,0,0,0,.583.172c.216.046.431.1.646.146a6.341,6.341,0,0,1,.673.183,2.148,2.148,0,0,1,.583.286,1.385,1.385,0,0,1,.41.446,1.317,1.317,0,0,1,.156.669,1.556,1.556,0,0,1-.21.84,1.651,1.651,0,0,1-.55.54A2.325,2.325,0,0,1,1.879.14a4.6,4.6,0,0,1-.848.08,3.793,3.793,0,0,1-.883-.1A2.182,2.182,0,0,1-.595-.194a1.623,1.623,0,0,1-.517-.584,2,2,0,0,1-.216-.875h.917a1.031,1.031,0,0,0,.14.511" transform="translate(1.328 5.6)" fill="#ff8600"></path>
-      </g>
-    </g>
-  </g>
-</svg>
-  <div class="app-nav-div"></div>
-  <div class="app-nav-title">Reporting &middot; Balance Sheet</div>
-</nav>
+    <div class="app-container">
+        <!-- Injected dynamically by common.js -->
+        <header class="top-navbar"></header>
 
-<div class="wrap">
-  <div class="topbar">
-    <div>
-      <div class="eyebrow">Finance &middot; Financial Position</div>
-      <div class="t1"><i class="ti ti-scale" aria-hidden="true"></i>Balance Sheet trend</div>
-      <div class="t2" id="subTitle">&mdash;</div>
+        <!-- Injected dynamically by common.js -->
+        <nav class="page-nav-bar"></nav>
+
+        <!-- Dashboard Canvas -->
+        <main class="dashboard-canvas">
+            <h2 class="sr-only">Balance sheet trend dashboard showing total assets, liabilities, and net assets over 12 months across four projects, with a project selector and a full line-item balance sheet table.</h2>
+
+            <div class="wrap">
+              <div class="topbar">
+                <div>
+                  <div class="t1"><i class="ti ti-scale" style="font-size:16px;vertical-align:-2px;margin-right:6px" aria-hidden="true"></i>Balance Sheet trend</div>
+                  <div class="t2" id="subTitle">&mdash;</div>
+                </div>
+                <span class="badge">Illustrative &mdash; for discussion only</span>
+              </div>
+
+              <div class="proj-row">
+                <span class="proj-lbl"><i class="ti ti-building" style="font-size:13px;vertical-align:-1px;margin-right:3px" aria-hidden="true"></i>Project</span>
+                <select id="projectSelect" onchange="selectProject(this.value)">
+                  <option value="all">All projects</option>
+                  <option value="P1">Ridgeway Estate</option>
+                  <option value="P2">Bayside Gardens</option>
+                  <option value="P3">North Haven</option>
+                  <option value="P4">Greenfield Park</option>
+                </select>
+              </div>
+
+              <div class="kpis">
+                <div class="kpi"><div class="kpi-l">Total assets</div><div class="kpi-v" id="kAssets">&mdash;</div><div class="kpi-sub" id="kAssetsSub">&mdash;</div></div>
+                <div class="kpi"><div class="kpi-l">Total liabilities</div><div class="kpi-v" id="kLiab">&mdash;</div><div class="kpi-sub" id="kLiabSub">&mdash;</div></div>
+                <div class="kpi"><div class="kpi-l">Net assets (equity)</div><div class="kpi-v" id="kNet">&mdash;</div><div class="kpi-sub" id="kNetSub">&mdash;</div></div>
+                <div class="kpi"><div class="kpi-l">Working capital</div><div class="kpi-v" id="kWC">&mdash;</div><div class="kpi-sub" id="kWCSub">&mdash;</div></div>
+              </div>
+
+              <div class="legend">
+                <span class="leg"><span class="leg-sq" style="background:#2E6B4F"></span>Total assets</span>
+                <span class="leg"><span class="leg-sq" style="background:#B0492E"></span>Total liabilities</span>
+                <span class="leg"><span class="leg-sq" style="background:#FF8600"></span>Net assets (equity)</span>
+              </div>
+              <div class="chart-box"><canvas id="bsChart" role="img" aria-label="Line chart of total assets, total liabilities, and net assets over 12 months">12-month trend of assets, liabilities and equity.</canvas></div>
+
+              <div class="section-l">Full balance sheet</div>
+              <div class="tbl-scroll">
+                <table>
+                  <colgroup>
+                    <col>
+                    <col style="width:76px"><col style="width:76px"><col style="width:76px"><col style="width:76px">
+                    <col style="width:76px"><col style="width:76px"><col style="width:76px"><col style="width:76px">
+                    <col style="width:76px"><col style="width:76px"><col style="width:76px"><col style="width:76px">
+                  </colgroup>
+                  <thead><tr id="tblHead"></tr></thead>
+                  <tbody id="tbody"></tbody>
+                </table>
+              </div>
+            </div>
+        </main>
     </div>
-    <span class="badge">Illustrative &mdash; for discussion only</span>
-  </div>
 
-  <div class="proj-row">
-    <span class="proj-lbl">Project</span>
-    <select class="proj-select" id="projSelect" onchange="selectProject(this.value)">
-      <option value="all">All projects</option>
-      <option value="P1">Ridgeway Estate</option>
-      <option value="P2">Bayside Gardens</option>
-      <option value="P3">North Haven</option>
-      <option value="P4">Greenfield Park</option>
-    </select>
-  </div>
+    <!-- CDNs & Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+    <script src="../js/common.js"></script>
 
-  <div class="kpis">
-    <div class="kpi"><div class="kpi-l">Total assets</div><div class="kpi-v" id="kAssets">&mdash;</div><div class="kpi-sub" id="kAssetsSub">&mdash;</div></div>
-    <div class="kpi"><div class="kpi-l">Total liabilities</div><div class="kpi-v" id="kLiab">&mdash;</div><div class="kpi-sub" id="kLiabSub">&mdash;</div></div>
-    <div class="kpi"><div class="kpi-l">Net assets (equity)</div><div class="kpi-v" id="kNet">&mdash;</div><div class="kpi-sub" id="kNetSub">&mdash;</div></div>
-    <div class="kpi"><div class="kpi-l">Working capital</div><div class="kpi-v" id="kWC">&mdash;</div><div class="kpi-sub" id="kWCSub">&mdash;</div></div>
-  </div>
+    <script>
+        injectShellLayout('xero_balance_sheet');
+    </script>
 
-  <div class="legend">
-    <span class="leg"><span class="leg-sq" style="background:#2E6B4F"></span>Total assets</span>
-    <span class="leg"><span class="leg-sq" style="background:#B0492E"></span>Total liabilities</span>
-    <span class="leg"><span class="leg-sq" style="background:#FF8600"></span>Net assets (equity)</span>
-  </div>
-  <div class="chart-box"><canvas id="bsChart" role="img" aria-label="Line chart of total assets, total liabilities, and net assets over 12 months">12-month trend of assets, liabilities and equity.</canvas></div>
+    <script>
+    function rnd(a,b){return Math.random()*(b-a)+a;}
 
-  <div class="section-l">Full balance sheet</div>
-  <div class="tbl-scroll">
-    <table>
-      <colgroup>
-        <col>
-        <col style="width:76px">
-        <col style="width:76px">
-        <col style="width:76px">
-        <col style="width:76px">
-        <col style="width:76px">
-        <col style="width:76px">
-        <col style="width:76px">
-        <col style="width:76px">
-        <col style="width:76px">
-        <col style="width:76px">
-        <col style="width:76px">
-        <col style="width:76px">
-      </colgroup>
-      <thead><tr id="tblHead"></tr></thead>
-      <tbody id="tbody"></tbody>
-    </table>
-  </div>
-</div>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
-<script>
-
-function rnd(a,b){return Math.random()*(b-a)+a;}
-
-function fmtCurrency(n){
-  const r = Math.round(n);
-  const sign = r < 0 ? '-' : '';
-  return sign + '$' + Math.abs(r).toLocaleString();
-}
-function fmtDelta(n){
-  const r = Math.round(n);
-  const sign = r >= 0 ? '+' : '-';
-  return sign + '$' + Math.abs(r).toLocaleString() + ' vs prior mo.';
-}
-
-const projects = {P1:'Ridgeway Estate', P2:'Bayside Gardens', P3:'North Haven', P4:'Greenfield Park'};
-const projectScale = {P1:1.4, P2:1.0, P3:0.7, P4:0.5};
-const monthLabels = ['Apr 2025','May 2025','Jun 2025','Jul 2025','Aug 2025','Sep 2025','Oct 2025','Nov 2025','Dec 2025','Jan 2026','Feb 2026','Mar 2026'];
-const monthShort = monthLabels.map(m => {
-  const [mon, yr] = m.split(' ');
-  return mon + " '" + yr.slice(2);
-});
-
-// --- Synthetic per-project monthly balance sheet, guaranteed to balance ---
-function genProjectSeries(scale){
-  let bank = rnd(15000,30000)*scale;
-  let ar = rnd(8000,20000)*scale;
-  let ap = rnd(4000,12000)*scale;
-  let gst = rnd(1000,4000)*scale;
-  let cye = 0;
-  const series = [];
-  monthLabels.forEach(month => {
-    bank += rnd(-3000,6000)*scale;
-    ar += rnd(-1500,3000)*scale;
-    ap += rnd(-1000,2000)*scale;
-    gst += rnd(-300,500)*scale;
-    cye += rnd(500,3500)*scale;
-
-    const totalAssets = bank + ar;
-    const totalLiabilities = ap + gst;
-    const netAssets = totalAssets - totalLiabilities;
-    const retained = netAssets - cye; // derived so the sheet always balances
-
-    series.push({month, bank, ar, ap, gst, totalAssets, totalLiabilities, netAssets, retained, cye, totalEquity: netAssets});
-  });
-  return series;
-}
-
-const projectData = {};
-Object.keys(projects).forEach(pid => { projectData[pid] = genProjectSeries(projectScale[pid]); });
-
-function sumSeries(seriesList){
-  return monthLabels.map((month, i) => {
-    const rows = seriesList.map(s => s[i]);
-    const bank = rows.reduce((a,r)=>a+r.bank,0);
-    const ar = rows.reduce((a,r)=>a+r.ar,0);
-    const ap = rows.reduce((a,r)=>a+r.ap,0);
-    const gst = rows.reduce((a,r)=>a+r.gst,0);
-    const cye = rows.reduce((a,r)=>a+r.cye,0);
-    const totalAssets = bank+ar;
-    const totalLiabilities = ap+gst;
-    const netAssets = totalAssets-totalLiabilities;
-    const retained = netAssets - cye;
-    return {month, bank, ar, ap, gst, totalAssets, totalLiabilities, netAssets, retained, cye, totalEquity: netAssets};
-  });
-}
-
-let currentProject = 'all';
-let chartInst = null;
-
-function getSeries(){
-  if (currentProject === 'all') return sumSeries(Object.values(projectData));
-  return projectData[currentProject];
-}
-
-function renderKPIs(series){
-  const i0 = series.length-1, i1 = series.length-2;
-  const cur = series[i0], prev = series[i1];
-  const wc = (r) => r.ar - (r.ap + r.gst);
-
-  document.getElementById('kAssets').textContent = fmtCurrency(cur.totalAssets);
-  document.getElementById('kAssets').className = 'kpi-v ' + (cur.totalAssets >= 0 ? 'ok' : 'danger');
-  const dA = cur.totalAssets - prev.totalAssets;
-  const subA = document.getElementById('kAssetsSub');
-  subA.textContent = fmtDelta(dA); subA.className = 'kpi-sub ' + (dA>=0?'pos':'neg');
-
-  document.getElementById('kLiab').textContent = fmtCurrency(cur.totalLiabilities);
-  document.getElementById('kLiab').className = 'kpi-v warn';
-  const dL = cur.totalLiabilities - prev.totalLiabilities;
-  const subL = document.getElementById('kLiabSub');
-  subL.textContent = fmtDelta(dL); subL.className = 'kpi-sub ' + (dL<=0?'pos':'neg');
-
-  document.getElementById('kNet').textContent = fmtCurrency(cur.netAssets);
-  document.getElementById('kNet').className = 'kpi-v ' + (cur.netAssets >= 0 ? 'ok' : 'danger');
-  const dN = cur.netAssets - prev.netAssets;
-  const subN = document.getElementById('kNetSub');
-  subN.textContent = fmtDelta(dN); subN.className = 'kpi-sub ' + (dN>=0?'pos':'neg');
-
-  const wcCur = wc(cur), wcPrev = wc(prev);
-  document.getElementById('kWC').textContent = fmtCurrency(wcCur);
-  document.getElementById('kWC').className = 'kpi-v ' + (wcCur >= 0 ? 'ok' : 'danger');
-  const dWC = wcCur - wcPrev;
-  const subWC = document.getElementById('kWCSub');
-  subWC.textContent = fmtDelta(dWC); subWC.className = 'kpi-sub ' + (dWC>=0?'pos':'neg');
-}
-
-function renderChart(series){
-  if (chartInst) chartInst.destroy();
-  chartInst = new Chart(document.getElementById('bsChart'), {
-    type: 'line',
-    data: {
-      labels: monthShort,
-      datasets: [
-        {label:'Total assets', data:series.map(s=>s.totalAssets), borderColor:'#2E6B4F', backgroundColor:'#2E6B4F', pointRadius:3, tension:0.25, borderWidth:2},
-        {label:'Total liabilities', data:series.map(s=>s.totalLiabilities), borderColor:'#B0492E', backgroundColor:'#B0492E', pointRadius:3, tension:0.25, borderWidth:2},
-        {label:'Net assets (equity)', data:series.map(s=>s.netAssets), borderColor:'#FF8600', backgroundColor:'#FF8600', pointRadius:3, tension:0.25, borderWidth:2},
-      ]
-    },
-    options: {
-      responsive:true, maintainAspectRatio:false,
-      plugins:{
-        legend:{display:false},
-        tooltip:{
-          backgroundColor:'#1B1B23', titleFont:{family:'IBM Plex Mono',size:11}, bodyFont:{family:'IBM Plex Mono',size:11.5}, padding:10, cornerRadius:6,
-          callbacks:{label:c=>c.dataset.label+': '+fmtCurrency(c.raw)}
-        }
-      },
-      scales:{
-        x:{grid:{display:false},ticks:{font:{family:'IBM Plex Mono',size:10},color:'#69727D'}},
-        y:{grid:{color:'#E3E3E2',lineWidth:1},ticks:{font:{family:'IBM Plex Mono',size:10.5},color:'#69727D',callback:v=>fmtCurrency(v)}}
-      }
+    function fmtCurrency(n){
+      const r = Math.round(n);
+      const sign = r < 0 ? '-' : '';
+      return sign + '$' + Math.abs(r).toLocaleString();
     }
-  });
-}
+    function fmtDelta(n){
+      const r = Math.round(n);
+      const sign = r >= 0 ? '+' : '-';
+      return sign + '$' + Math.abs(r).toLocaleString() + ' vs prior mo.';
+    }
 
-function renderTableHead(){
-  const tr = document.getElementById('tblHead');
-  let html = '<th>Account</th>';
-  monthShort.forEach(m => html += `<th>${m}</th>`);
-  tr.innerHTML = html;
-}
+    const projects = {P1:'Ridgeway Estate', P2:'Bayside Gardens', P3:'North Haven', P4:'Greenfield Park'};
+    const projectScale = {P1:1.4, P2:1.0, P3:0.7, P4:0.5};
+    const monthLabels = ['Apr 2025','May 2025','Jun 2025','Jul 2025','Aug 2025','Sep 2025','Oct 2025','Nov 2025','Dec 2025','Jan 2026','Feb 2026','Mar 2026'];
+    const monthShort = monthLabels.map(m => {
+      const [mon, yr] = m.split(' ');
+      return mon + " '" + yr.slice(2);
+    });
 
-function cellsFor(series, key){
-  return series.map(s => {
-    const v = s[key];
-    const cls = v < 0 ? ' class="neg"' : '';
-    return `<td${cls}>${fmtCurrency(v)}</td>`;
-  }).join('');
-}
+    // --- Synthetic per-project monthly balance sheet, guaranteed to balance ---
+    function genProjectSeries(scale){
+      let bank = rnd(15000,30000)*scale;
+      let ar = rnd(8000,20000)*scale;
+      let ap = rnd(4000,12000)*scale;
+      let gst = rnd(1000,4000)*scale;
+      let cye = 0;
+      const series = [];
+      monthLabels.forEach(month => {
+        bank += rnd(-3000,6000)*scale;
+        ar += rnd(-1500,3000)*scale;
+        ap += rnd(-1000,2000)*scale;
+        gst += rnd(-300,500)*scale;
+        cye += rnd(500,3500)*scale;
 
-function renderTableBody(series){
-  const body = document.getElementById('tbody');
-  body.innerHTML = '';
-  const nCols = monthShort.length + 1;
+        const totalAssets = bank + ar;
+        const totalLiabilities = ap + gst;
+        const netAssets = totalAssets - totalLiabilities;
+        const retained = netAssets - cye; // derived so the sheet always balances
 
-  function addRow(rowType, label, key){
-    const tr = document.createElement('tr');
-    tr.className = rowType;
-    tr.innerHTML = `<td title="${label}">${label}</td>${cellsFor(series, key)}`;
-    body.appendChild(tr);
-  }
-  function addDivider(label){
-    const tr = document.createElement('tr');
-    tr.className = 'category';
-    tr.innerHTML = `<td colspan="${nCols}">${label}</td>`;
-    body.appendChild(tr);
-  }
-  function addGroup(label){
-    const tr = document.createElement('tr');
-    tr.className = 'grp';
-    tr.innerHTML = `<td colspan="${nCols}">${label}</td>`;
-    body.appendChild(tr);
-  }
+        series.push({month, bank, ar, ap, gst, totalAssets, totalLiabilities, netAssets, retained, cye, totalEquity: netAssets});
+      });
+      return series;
+    }
 
-  addDivider('Assets');
-  addGroup('Bank');
-  addRow('', 'Business Bank Account', 'bank');
-  addRow('sub', 'Total Bank', 'bank');
-  addGroup('Current Assets');
-  addRow('', 'Accounts Receivable', 'ar');
-  addRow('sub', 'Total Current Assets', 'ar');
-  addRow('grand', 'Total Assets', 'totalAssets');
+    const projectData = {};
+    Object.keys(projects).forEach(pid => { projectData[pid] = genProjectSeries(projectScale[pid]); });
 
-  addDivider('Liabilities');
-  addGroup('Current Liabilities');
-  addRow('', 'Accounts Payable', 'ap');
-  addRow('', 'GST', 'gst');
-  addRow('sub', 'Total Current Liabilities', 'totalLiabilities');
-  addRow('grand', 'Total Liabilities', 'totalLiabilities');
+    function sumSeries(seriesList){
+      return monthLabels.map((month, i) => {
+        const rows = seriesList.map(s => s[i]);
+        const bank = rows.reduce((a,r)=>a+r.bank,0);
+        const ar = rows.reduce((a,r)=>a+r.ar,0);
+        const ap = rows.reduce((a,r)=>a+r.ap,0);
+        const gst = rows.reduce((a,r)=>a+r.gst,0);
+        const cye = rows.reduce((a,r)=>a+r.cye,0);
+        const totalAssets = bank+ar;
+        const totalLiabilities = ap+gst;
+        const netAssets = totalAssets-totalLiabilities;
+        const retained = netAssets - cye;
+        return {month, bank, ar, ap, gst, totalAssets, totalLiabilities, netAssets, retained, cye, totalEquity: netAssets};
+      });
+    }
 
-  addRow('grand', 'Net Assets', 'netAssets');
+    let currentProject = 'all';
+    let chartInst = null;
 
-  addGroup('Equity');
-  addRow('', 'Retained Earnings', 'retained');
-  addRow('', 'Current Year Earnings', 'cye');
-  addRow('sub', 'Total Equity', 'totalEquity');
-}
+    function getSeries(){
+      if (currentProject === 'all') return sumSeries(Object.values(projectData));
+      return projectData[currentProject];
+    }
 
-function render(){
-  const series = getSeries();
-  const pName = currentProject === 'all' ? 'All projects' : projects[currentProject];
-  document.getElementById('subTitle').innerHTML =
-    `<b>NTT Property Development</b> &nbsp;&middot;&nbsp; ${pName} &nbsp;&middot;&nbsp; as at ${monthLabels[monthLabels.length-1]}`;
-  renderKPIs(series);
-  renderChart(series);
-  renderTableHead();
-  renderTableBody(series);
-}
+    function renderKPIs(series){
+      const i0 = series.length-1, i1 = series.length-2;
+      const cur = series[i0], prev = series[i1];
+      const wc = (r) => r.ar - (r.ap + r.gst);
 
-function selectProject(pid){
-  currentProject = pid;
-  render();
-}
+      document.getElementById('kAssets').textContent = fmtCurrency(cur.totalAssets);
+      document.getElementById('kAssets').className = 'kpi-v ' + (cur.totalAssets >= 0 ? 'ok' : 'danger');
+      const dA = cur.totalAssets - prev.totalAssets;
+      const subA = document.getElementById('kAssetsSub');
+      subA.textContent = fmtDelta(dA); subA.className = 'kpi-sub ' + (dA>=0?'pos':'neg');
 
-render();
+      document.getElementById('kLiab').textContent = fmtCurrency(cur.totalLiabilities);
+      document.getElementById('kLiab').className = 'kpi-v warn';
+      const dL = cur.totalLiabilities - prev.totalLiabilities;
+      const subL = document.getElementById('kLiabSub');
+      subL.textContent = fmtDelta(dL); subL.className = 'kpi-sub ' + (dL<=0?'pos':'neg');
 
-</script>
+      document.getElementById('kNet').textContent = fmtCurrency(cur.netAssets);
+      document.getElementById('kNet').className = 'kpi-v ' + (cur.netAssets >= 0 ? 'ok' : 'danger');
+      const dN = cur.netAssets - prev.netAssets;
+      const subN = document.getElementById('kNetSub');
+      subN.textContent = fmtDelta(dN); subN.className = 'kpi-sub ' + (dN>=0?'pos':'neg');
+
+      const wcCur = wc(cur), wcPrev = wc(prev);
+      document.getElementById('kWC').textContent = fmtCurrency(wcCur);
+      document.getElementById('kWC').className = 'kpi-v ' + (wcCur >= 0 ? 'ok' : 'danger');
+      const dWC = wcCur - wcPrev;
+      const subWC = document.getElementById('kWCSub');
+      subWC.textContent = fmtDelta(dWC); subWC.className = 'kpi-sub ' + (dWC>=0?'pos':'neg');
+    }
+
+    function renderChart(series){
+      if (chartInst) chartInst.destroy();
+      chartInst = new Chart(document.getElementById('bsChart'), {
+        type: 'line',
+        data: {
+          labels: monthShort,
+          datasets: [
+            {label:'Total assets', data:series.map(s=>s.totalAssets), borderColor:'#2E6B4F', backgroundColor:'#2E6B4F', pointRadius:3, tension:0.25, borderWidth:2},
+            {label:'Total liabilities', data:series.map(s=>s.totalLiabilities), borderColor:'#B0492E', backgroundColor:'#B0492E', pointRadius:3, tension:0.25, borderWidth:2},
+            {label:'Net assets (equity)', data:series.map(s=>s.netAssets), borderColor:'#FF8600', backgroundColor:'#FF8600', pointRadius:3, tension:0.25, borderWidth:2},
+          ]
+        },
+        options: {
+          responsive:true, maintainAspectRatio:false,
+          plugins:{
+            legend:{display:false},
+            tooltip:{
+              backgroundColor:'#1B1B23', titleFont:{size:11}, bodyFont:{size:11.5}, padding:10, cornerRadius:6,
+              callbacks:{label:c=>c.dataset.label+': '+fmtCurrency(c.raw)}
+            }
+          },
+          scales:{
+            x:{grid:{display:false},ticks:{font:{size:10},color:'#898781'}},
+            y:{grid:{color:'#e1e0d9',lineWidth:1},ticks:{font:{size:10.5},color:'#898781',callback:v=>fmtCurrency(v)}}
+          }
+        }
+      });
+    }
+
+    function renderTableHead(){
+      const tr = document.getElementById('tblHead');
+      let html = '<th>Account</th>';
+      monthShort.forEach(m => html += `<th>${m}</th>`);
+      tr.innerHTML = html;
+    }
+
+    function cellsFor(series, key){
+      return series.map(s => {
+        const v = s[key];
+        const cls = v < 0 ? ' class="neg"' : '';
+        return `<td${cls}>${fmtCurrency(v)}</td>`;
+      }).join('');
+    }
+
+    function renderTableBody(series){
+      const body = document.getElementById('tbody');
+      body.innerHTML = '';
+      const nCols = monthShort.length + 1;
+
+      function addRow(rowType, label, key){
+        const tr = document.createElement('tr');
+        tr.className = rowType;
+        tr.innerHTML = `<td title="${label}">${label}</td>${cellsFor(series, key)}`;
+        body.appendChild(tr);
+      }
+      function addDivider(label){
+        const tr = document.createElement('tr');
+        tr.className = 'category';
+        tr.innerHTML = `<td colspan="${nCols}">${label}</td>`;
+        body.appendChild(tr);
+      }
+      function addGroup(label){
+        const tr = document.createElement('tr');
+        tr.className = 'grp';
+        tr.innerHTML = `<td colspan="${nCols}">${label}</td>`;
+        body.appendChild(tr);
+      }
+
+      addDivider('Assets');
+      addGroup('Bank');
+      addRow('', 'Business Bank Account', 'bank');
+      addRow('sub', 'Total Bank', 'bank');
+      addGroup('Current Assets');
+      addRow('', 'Accounts Receivable', 'ar');
+      addRow('sub', 'Total Current Assets', 'ar');
+      addRow('grand', 'Total Assets', 'totalAssets');
+
+      addDivider('Liabilities');
+      addGroup('Current Liabilities');
+      addRow('', 'Accounts Payable', 'ap');
+      addRow('', 'GST', 'gst');
+      addRow('sub', 'Total Current Liabilities', 'totalLiabilities');
+      addRow('grand', 'Total Liabilities', 'totalLiabilities');
+
+      addRow('grand', 'Net Assets', 'netAssets');
+
+      addGroup('Equity');
+      addRow('', 'Retained Earnings', 'retained');
+      addRow('', 'Current Year Earnings', 'cye');
+      addRow('sub', 'Total Equity', 'totalEquity');
+    }
+
+    function render(){
+      const series = getSeries();
+      const pName = currentProject === 'all' ? 'All projects' : projects[currentProject];
+      document.getElementById('subTitle').innerHTML =
+        `<b>NTT Property Development</b> &nbsp;&middot;&nbsp; ${pName} &nbsp;&middot;&nbsp; as at ${monthLabels[monthLabels.length-1]}`;
+      renderKPIs(series);
+      renderChart(series);
+      renderTableHead();
+      renderTableBody(series);
+    }
+
+    function selectProject(pid){
+      currentProject = pid;
+      render();
+    }
+
+    render();
+    </script>
 </body>
 </html>
