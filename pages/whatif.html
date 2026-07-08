@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>What-if Analysis - YourLand Dashboard</title>
+    
+    <!-- CDNs -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
+    
+    <!-- CSS styles -->
+    <link href="../css/style.css" rel="stylesheet">
+    <link href="../css/components.css" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Injected dynamically by common.js -->
+        <header class="top-navbar"></header>
+        
+        <!-- Injected dynamically by common.js -->
+        <nav class="page-nav-bar"></nav>
+        
+        <!-- Dashboard Canvas -->
+        <main class="dashboard-canvas whatif-canvas">
+            
+            <div class="row g-3 mb-4 align-items-center">
+                <div class="col-12">
+                    <h2 class="h4 mb-0 fw-bold">Financial Simulation & What-if modeling</h2>
+                    <p class="text-muted small mb-0">Model hypothetical adjustments for specific stages/periods to see real-time KPI projections before applying them to the entire dashboard.</p>
+                </div>
+            </div>
+
+            <div class="row g-3">
+                <!-- Left Column: Inputs & Selector Panel -->
+                <div class="col-12 col-lg-6">
+                    <div class="card-master mb-4">
+                        <div class="card-title-bar">
+                            <h3>1. Select Stage & Target Period <span class="card-subtitle">Select which stage and month to model</span></h3>
+                            <i class="fa-solid fa-layer-group text-muted"></i>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="stageSelect" class="form-label fw-bold small text-uppercase text-muted">Select Development Stage</label>
+                            <select id="stageSelect" class="form-select">
+                                <option value="" selected disabled>Choose a stage...</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label for="periodSelect" class="form-label fw-bold small text-uppercase text-muted">Select Period (Month & Year)</label>
+                            <select id="periodSelect" class="form-select" disabled>
+                                <option value="" selected disabled>Choose a period...</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="card-master" id="editorCard" style="opacity: 0.6; pointer-events: none;">
+                        <div class="card-title-bar">
+                            <h3 id="editorHeading">2. Value for Stage -- and Period --</h3>
+                            <i class="fa-solid fa-pen-to-square text-muted"></i>
+                        </div>
+                        
+                        <div id="editorRowsContainer">
+                            <!-- Single Stage Parameter Row -->
+                            <div class="whatif-input-row">
+                                <div class="whatif-label-col">
+                                    <div class="whatif-label-title" id="editorFieldLabel">Stage Parameter Value</div>
+                                    <div class="whatif-label-current" id="editorCurrentValueLabel">Current: $0.0</div>
+                                </div>
+                                <div class="whatif-input-group">
+                                    <input type="text" class="whatif-input-field" id="input-val-stage" placeholder="New Value ($)">
+                                    <button class="whatif-action-btn whatif-btn-check" id="btn-save-stage" title="Save Edit"><i class="fa-solid fa-circle-check"></i></button>
+                                    <button class="whatif-action-btn whatif-btn-cross" id="btn-reset-stage" title="Discard"><i class="fa-solid fa-circle-xmark"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Live KPI Projections & Queued Edits Registry -->
+                <div class="col-12 col-lg-6">
+                    <div class="card-master mb-4">
+                        <div class="card-title-bar">
+                            <h3>Project-wide Simulation Preview <span class="card-subtitle">Real-time projections for the selected budget scenario</span></h3>
+                            <i class="fa-solid fa-calculator text-muted"></i>
+                        </div>
+                        
+                        <div class="kpi-compare-grid">
+                            <!-- Dev Profit -->
+                            <div class="kpi-compare-item">
+                                <div class="kpi-compare-title">Development Profit</div>
+                                <div class="kpi-compare-values">
+                                    <span class="kpi-compare-old" id="kpi-old-profit">$0.0</span>
+                                    <span class="kpi-compare-new" id="kpi-new-profit">$0.0</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Dev Margin -->
+                            <div class="kpi-compare-item">
+                                <div class="kpi-compare-title">Development Margin</div>
+                                <div class="kpi-compare-values">
+                                    <span class="kpi-compare-old" id="kpi-old-margin">0.0%</span>
+                                    <span class="kpi-compare-new" id="kpi-new-margin">0.0%</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Project IRR -->
+                            <div class="kpi-compare-item">
+                                <div class="kpi-compare-title">Project IRR (Lifetime)</div>
+                                <div class="kpi-compare-values">
+                                    <span class="kpi-compare-old" id="kpi-old-irr">0.0%</span>
+                                    <span class="kpi-compare-new" id="kpi-new-irr">0.0%</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Equity IRR -->
+                            <div class="kpi-compare-item">
+                                <div class="kpi-compare-title">Equity IRR (Lifetime)</div>
+                                <div class="kpi-compare-values">
+                                    <span class="kpi-compare-old" id="kpi-old-equity-irr">0.0%</span>
+                                    <span class="kpi-compare-new" id="kpi-new-equity-irr">0.0%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-master mb-4" style="min-height: 180px;">
+                        <div class="card-title-bar">
+                            <h3>Queued Simulation Edits <span class="card-subtitle">Edits staged in this session</span></h3>
+                            <i class="fa-solid fa-list-check text-muted"></i>
+                        </div>
+                        <div class="table-responsive" style="max-height: 150px; overflow-y: auto;">
+                            <table class="whatif-queue-table">
+                                <thead>
+                                    <tr>
+                                        <th>Stage</th>
+                                        <th>Period</th>
+                                        <th>Field</th>
+                                        <th class="text-end">Original</th>
+                                        <th class="text-end">Simulated</th>
+                                        <th class="text-center">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="queueTableBody">
+                                    <tr>
+                                        <td colspan="6" class="text-center text-muted py-3">No edits queued in this simulation yet.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="card-master bg-light border p-3">
+                        <div class="card-title-bar mb-2">
+                            <h3>Apply and Run Simulation <span class="card-subtitle">Save updates to simulated active workspace</span></h3>
+                            <i class="fa-solid fa-circle-play text-muted"></i>
+                        </div>
+                        <div class="row g-2">
+                            <div class="col-12 col-md-6">
+                                <button class="btn btn-success w-100 fw-bold py-2 shadow-sm" id="btnApplySimulation" disabled>
+                                    <i class="fa-solid fa-circle-check me-2"></i>Apply Simulation (30s)
+                                </button>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <button class="btn btn-outline-danger w-100 fw-bold py-2" id="btnResetSimulation">
+                                    <i class="fa-solid fa-rotate-left me-2"></i>Reset Simulation
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- JS Core Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+    <!-- Custom Modules -->
+    <script src="../js/data_loader.js?v=2"></script>
+    <script src="../js/state.js?v=2"></script>
+    <script src="../js/common.js?v=2"></script>
+    <script src="../js/filters.js?v=2"></script>
+    <script src="../js/charts.js?v=2"></script>
+    <script src="../js/whatif.js?v=2"></script>
+</body>
+</html>

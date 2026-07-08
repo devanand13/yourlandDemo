@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payments by Month - YourLand Dashboard</title>
+    
+    <!-- CDNs -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.36.0/tabler-icons.min.css" rel="stylesheet">
+    
+    <!-- CSS styles -->
+    <link href="../css/style.css" rel="stylesheet">
+    <link href="../css/components.css" rel="stylesheet">
+    
+    <style>
+    .wrap{padding:0.5rem 0;font-family:var(--font-sans)}
+    .topbar{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1.5rem;gap:12px;border-bottom:0.5px solid var(--border);padding-bottom:1.25rem}
+    .titles .t1{font-size:18px;font-weight:500;color:var(--text-primary);display:flex;align-items:center;gap:8px}
+    .titles .t2{font-size:13px;color:var(--text-muted);margin-top:4px}
+    .badge{font-size:11px;color:var(--text-muted);border:0.5px solid var(--border);border-radius:20px;padding:4px 12px;white-space:nowrap;flex-shrink:0}
+    .controls{display:flex;flex-direction:column;gap:8px;margin-bottom:1.5rem}
+    .ctrl-row{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+    .ctrl-lbl{font-size:11px;font-weight:500;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;width:52px;flex-shrink:0}
+    .fb{font-size:12px;font-weight:500;padding:4px 12px;border-radius:20px;border:0.5px solid var(--border-strong);background:transparent;color:var(--text-secondary);cursor:pointer;transition:all .12s}
+    .fb:hover{background:var(--surface-1)}
+    .fb.on{background:#FFE7CC;color:#7A5A28;border-color:#FF8600}
+    select{font-size:12px;font-family:var(--font-sans);padding:4px 28px 4px 10px;border-radius:20px;border:0.5px solid var(--border-strong);background:var(--surface-1);color:var(--text-primary);cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23898781' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center}
+    .kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:1.5rem}
+    .kpi{background:var(--surface-1);border-radius:12px;padding:14px 16px;border:0.5px solid var(--border)}
+    .kpi-icon{font-size:18px;color:var(--text-muted);margin-bottom:8px}
+    .kpi-l{font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px}
+    .kpi-v{font-size:22px;font-weight:500;font-variant-numeric:tabular-nums;color:var(--text-primary)}
+    .kpi-v.ok{color:#3b6d11}
+    .kpi-v.warn{color:#854f0b}
+    .kpi-v.info{color:#0C447C}
+    .kpi-sub{font-size:11px;color:var(--text-muted);margin-top:3px}
+    .chart-section{background:var(--surface-1);border-radius:12px;border:0.5px solid var(--border);padding:16px;margin-bottom:1.5rem}
+    .chart-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px}
+    .chart-title{font-size:13px;font-weight:500;color:var(--text-primary)}
+    .legend{display:flex;gap:16px;flex-wrap:wrap}
+    .leg{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text-secondary)}
+    .leg-sq{width:10px;height:10px;border-radius:2px;flex-shrink:0}
+    .chart-box{position:relative;width:100%;height:200px}
+    .tbl-wrap{background:var(--surface-1);border-radius:12px;border:0.5px solid var(--border);overflow:hidden}
+    .tbl-header{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:0.5px solid var(--border)}
+    .tbl-title{font-size:13px;font-weight:500;color:var(--text-primary)}
+    .tbl-meta{font-size:12px;color:var(--text-muted)}
+    .tbl-scroll{overflow-x:auto}
+    table{width:100%;border-collapse:collapse;font-size:13px}
+    th{font-size:11px;font-weight:500;color:var(--text-muted);text-align:right;padding:10px 14px;border-bottom:0.5px solid var(--border);white-space:nowrap;background:var(--surface-1)}
+    th:first-child,th:nth-child(2){text-align:left}
+    td{padding:10px 14px;text-align:right;border-bottom:0.5px solid var(--border);color:var(--text-primary);white-space:nowrap;font-variant-numeric:tabular-nums}
+    td:first-child,td:nth-child(2){text-align:left}
+    tr.grp td{background:var(--surface-0,#f5f4f0);font-size:11px;font-weight:500;color:var(--text-secondary);padding:8px 14px;border-bottom:0.5px solid var(--border);text-transform:uppercase;letter-spacing:.04em}
+    tr.sub td{font-weight:500;border-top:0.5px solid var(--border-strong);background:var(--surface-1)}
+    tr.grand td{font-weight:500;background:#E6F1FB;color:#0C447C;border-top:1px solid #85B7EB}
+    tr.data-row:hover td{background:var(--surface-0)}
+    tr:last-child td{border-bottom:none}
+    .pill{display:inline-flex;font-size:10px;font-weight:500;padding:2px 8px;border-radius:20px}
+    .pill-ar{background:#E6F1FB;color:#0C447C}
+    .pill-ap{background:#FAEEDA;color:#633806}
+    .pill-cr{background:#EAF3DE;color:#27500A}
+    .pos{color:#3b6d11}
+    .neg{color:#854f0b}
+    .muted{color:var(--text-muted)}
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Injected dynamically by common.js -->
+        <header class="top-navbar"></header>
+        
+        <!-- Injected dynamically by common.js -->
+        <nav class="page-nav-bar"></nav>
+        
+        <!-- Dashboard Canvas -->
+        <main class="dashboard-canvas">
+            <h2 class="sr-only">NTT Property Development payments by month report showing AR receipts, AP payments and credit payments grouped by month from 2021 to 2026, with project selector, account dropdown and payment type filter.</h2>
+            
+            <div class="wrap">
+              <div class="topbar">
+                <div class="titles">
+                  <div class="t1"><i class="ti ti-cash" aria-hidden="true"></i>Payments by month</div>
+                  <div class="t2" id="subTitle">FY 2021–26 · NTT Property Development · All projects · All accounts</div>
+                </div>
+                <span class="badge">Illustrative — for discussion only</span>
+              </div>
+
+              <div class="controls">
+                <div class="ctrl-row">
+                  <span class="ctrl-lbl">Project</span>
+                  <select id="projectSelect" onchange="changeProj(this.value)">
+                    <option value="all">All projects</option>
+                    <option value="P1">Ridgeway Estate</option>
+                    <option value="P2">Bayside Gardens</option>
+                    <option value="P3">North Haven</option>
+                    <option value="P4">Greenfield Park</option>
+                  </select>
+                </div>
+                <div class="ctrl-row">
+                  <span class="ctrl-lbl">Account</span>
+                  <select id="acctSel" onchange="selAcct(this.value)">
+                    <option value="all">All accounts</option>
+                    <option value="BBA">Business bank account (090)</option>
+                    <option value="BSA">Business savings account (091)</option>
+                    <option value="OPA">Operating account (092)</option>
+                    <option value="TRA">Trust account (093)</option>
+                  </select>
+                </div>
+                <div class="ctrl-row">
+                  <span class="ctrl-lbl">Type</span>
+                  <button class="fb on" onclick="selType('all',this)">All</button>
+                  <button class="fb" onclick="selType('AR',this)">AR receipts</button>
+                  <button class="fb" onclick="selType('AP',this)">AP payments</button>
+                  <button class="fb" onclick="selType('CR',this)">Credits</button>
+                </div>
+                <div class="ctrl-row">
+                  <span class="ctrl-lbl">Period</span>
+                  <select id="fySelect" onchange="changeFY(this.value)">
+                    <option value="all">All years</option>
+                    <option value="2021">FY21</option>
+                    <option value="2022">FY22</option>
+                    <option value="2023">FY23</option>
+                    <option value="2024">FY24</option>
+                    <option value="2025">FY25</option>
+                    <option value="2026">FY26</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="kpis">
+                <div class="kpi">
+                  <div class="kpi-icon"><i class="ti ti-arrow-down-circle" aria-hidden="true"></i></div>
+                  <div class="kpi-l">Total AR receipts</div>
+                  <div class="kpi-v ok" id="kAR">—</div>
+                  <div class="kpi-sub" id="kARc">— payments</div>
+                </div>
+                <div class="kpi">
+                  <div class="kpi-icon"><i class="ti ti-arrow-up-circle" aria-hidden="true"></i></div>
+                  <div class="kpi-l">Total AP payments</div>
+                  <div class="kpi-v warn" id="kAP">—</div>
+                  <div class="kpi-sub" id="kAPc">— payments</div>
+                </div>
+                <div class="kpi">
+                  <div class="kpi-icon"><i class="ti ti-receipt-refund" aria-hidden="true"></i></div>
+                  <div class="kpi-l">Credit payments</div>
+                  <div class="kpi-v info" id="kCR">—</div>
+                  <div class="kpi-sub" id="kCRc">— payments</div>
+                </div>
+                <div class="kpi">
+                  <div class="kpi-icon"><i class="ti ti-trending-up" aria-hidden="true"></i></div>
+                  <div class="kpi-l">Net cash movement</div>
+                  <div class="kpi-v" id="kNet">—</div>
+                  <div class="kpi-sub" id="kPeak">Peak: —</div>
+                </div>
+              </div>
+
+              <div class="chart-section">
+                <div class="chart-header">
+                  <span class="chart-title">Monthly payment activity</span>
+                  <div class="legend">
+                    <span class="leg"><span class="leg-sq" style="background:#2a78d6"></span>AR receipts</span>
+                    <span class="leg"><span class="leg-sq" style="background:#e34948"></span>AP payments</span>
+                    <span class="leg"><span class="leg-sq" style="background:#1baf7a"></span>Credits</span>
+                  </div>
+                </div>
+                <div class="chart-box"><canvas id="mainChart" role="img" aria-label="Bar chart showing monthly AR receipts, AP payments and credit payments from 2021 to 2026">Monthly payment data by type.</canvas></div>
+              </div>
+
+              <div class="tbl-wrap">
+                <div class="tbl-header">
+                  <span class="tbl-title">Monthly breakdown</span>
+                  <span class="tbl-meta" id="tblMeta">—</span>
+                </div>
+                <div class="tbl-scroll">
+                  <table>
+                    <thead><tr>
+                      <th>Period</th><th>Account</th><th>AR receipts</th><th>AP payments</th><th>Credits</th><th>Net</th><th>Count</th>
+                    </tr></thead>
+                    <tbody id="tbody"></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- CDNs & Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+    <script src="../js/common.js"></script>
+    
+    <script>
+        injectShellLayout('xero_payments');
+    </script>
+    
+    <script>
+    function fmtM(n){if(n==null||n===0)return'—';const a=Math.abs(n);const s=n<0?'-':'';return s+'$'+(a>=1e6?(a/1e6).toFixed(2)+'M':(a/1e3).toFixed(0)+'k');}
+    function rnd(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
+
+    const projs={P1:'Ridgeway Estate',P2:'Bayside Gardens',P3:'North Haven',P4:'Greenfield Park'};
+    const accounts={BBA:'Business bank (090)',BSA:'Business savings (091)',OPA:'Operating (092)',TRA:'Trust (093)'};
+    const acctKeys=Object.keys(accounts);
+    const fyears=[2021,2022,2023,2024,2025,2026];
+    const moLabels=['Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar','Apr','May','Jun'];
+
+    const data=[];
+    ['P1','P2','P3','P4'].forEach((pid,pi)=>{
+      acctKeys.forEach((aid,ai)=>{
+        fyears.forEach(fy=>{
+          moLabels.forEach((mo,mi)=>{
+            const calYr=mi<6?fy:fy-1;
+            const isSettle=rnd(0,10)>6;
+            const ar=isSettle?rnd(800,1800)*1000:rnd(200,600)*1000;
+            const ap=rnd(150,700)*1000;
+            const cr=rnd(0,10)>7?rnd(20,120)*1000:0;
+            const cnt=rnd(3,18);
+            data.push({pid,aid,fy,mi,mo,calYr,ar,ap,cr,net:ar-ap-cr,cnt});
+          });
+        });
+      });
+    });
+
+    let curProj='all',curAcct='all',curType='all',curFY='all',chartInst=null;
+
+    function filtered(){
+      return data.filter(r=>
+        (curProj==='all'||r.pid===curProj)&&
+        (curAcct==='all'||r.aid===curAcct)&&
+        (curFY==='all'||r.fy===curFY)
+      );
+    }
+
+    function fmtMo(r){return `${r.mo} ${r.calYr}`;}
+
+    function getTypeData(rows,field){
+      if(curType==='all')return rows.map(r=>r[field]);
+      return rows.map(r=>curType==='AR'?r.ar:curType==='AP'?r.ap:r.cr);
+    }
+
+    function render(){
+      const rows=filtered();
+
+      const grouped={};
+      rows.forEach(r=>{
+        const k=`${r.fy}-${String(r.mi).padStart(2,'0')}`;
+        if(!grouped[k])grouped[k]={fy:r.fy,mi:r.mi,mo:r.mo,calYr:r.calYr,ar:0,ap:0,cr:0,cnt:0};
+        grouped[k].ar+=r.ar;grouped[k].ap+=r.ap;grouped[k].cr+=r.cr;grouped[k].cnt+=r.cnt;
+      });
+      const keys=Object.keys(grouped).sort();
+      const gRows=keys.map(k=>({...grouped[k],net:grouped[k].ar-grouped[k].ap-grouped[k].cr}));
+
+      const totAR=rows.reduce((a,r)=>a+r.ar,0);
+      const totAP=rows.reduce((a,r)=>a+r.ap,0);
+      const totCR=rows.reduce((a,r)=>a+r.cr,0);
+      const totNet=totAR-totAP-totCR;
+      const cntAR=rows.filter(r=>r.ar>0).length;
+      const cntAP=rows.filter(r=>r.ap>0).length;
+      const cntCR=rows.filter(r=>r.cr>0).length;
+      const peak=gRows.reduce((a,r)=>r.ar>a.ar?r:a,gRows[0]||{ar:0,mo:'',calYr:''});
+
+      document.getElementById('kAR').textContent=fmtM(totAR);
+      document.getElementById('kARc').textContent=`${cntAR} payments`;
+      document.getElementById('kAP').textContent=fmtM(totAP);
+      document.getElementById('kAPc').textContent=`${cntAP} payments`;
+      document.getElementById('kCR').textContent=fmtM(totCR);
+      document.getElementById('kCRc').textContent=`${cntCR} payments`;
+      const netEl=document.getElementById('kNet');
+      netEl.textContent=fmtM(totNet);
+      netEl.className='kpi-v '+(totNet>=0?'ok':'warn');
+      document.getElementById('kPeak').textContent=peak.mo?`Peak AR: ${fmtM(peak.ar)} ${peak.mo} ${peak.calYr}`:'Peak: —';
+
+      const pName=curProj==='all'?'All projects':projs[curProj];
+      const aName=curAcct==='all'?'All accounts':accounts[curAcct];
+      const fyName=curFY==='all'?'FY 2021–26':`FY ${curFY}`;
+      document.getElementById('subTitle').textContent=`${fyName} · NTT Property Development · ${pName} · ${aName}`;
+      document.getElementById('tblMeta').textContent=`${gRows.length} months`;
+
+      if(chartInst)chartInst.destroy();
+      const labels=gRows.map(r=>fmtMo(r));
+      const arData=gRows.map(r=>curType==='AP'?0:curType==='CR'?0:r.ar);
+      const apData=gRows.map(r=>curType==='AR'?0:curType==='CR'?0:-r.ap);
+      const crData=gRows.map(r=>curType==='AR'?0:curType==='AP'?0:r.cr);
+
+      chartInst=new Chart(document.getElementById('mainChart'),{
+        type:'bar',
+        data:{
+          labels,
+          datasets:[
+            {label:'AR receipts',data:arData,backgroundColor:'#2a78d6',borderRadius:2,borderSkipped:false},
+            {label:'AP payments',data:apData,backgroundColor:'#e34948',borderRadius:2,borderSkipped:false},
+            {label:'Credits',data:crData,backgroundColor:'#1baf7a',borderRadius:2,borderSkipped:false},
+          ]
+        },
+        options:{
+          responsive:true,maintainAspectRatio:false,
+          plugins:{
+            legend:{display:false},
+            tooltip:{callbacks:{label:c=>`${c.dataset.label}: $${Math.abs(Math.round(c.raw)).toLocaleString()}`}}
+          },
+          scales:{
+            x:{grid:{display:false},ticks:{font:{size:10},color:'#898781',maxTicksLimit:18,maxRotation:45}},
+            y:{grid:{color:'#e1e0d9',lineWidth:0.5},ticks:{font:{size:11},color:'#898781',callback:v=>{const a=Math.abs(v);return(v<0?'-':'')+'$'+(a>=1e6?(a/1e6).toFixed(1)+'M':(a/1e3).toFixed(0)+'k');}}}
+          }
+        }
+      });
+
+      const body=document.getElementById('tbody');body.innerHTML='';
+      const fyList=curFY==='all'?fyears:[curFY];
+      fyList.forEach(fy=>{
+        const fyRows=gRows.filter(r=>r.fy===fy);
+        if(!fyRows.length)return;
+        const fyAR=fyRows.reduce((a,r)=>a+r.ar,0);
+        const fyAP=fyRows.reduce((a,r)=>a+r.ap,0);
+        const fyCR=fyRows.reduce((a,r)=>a+r.cr,0);
+        const fyNet=fyAR-fyAP-fyCR;
+        const fyCnt=fyRows.reduce((a,r)=>a+r.cnt,0);
+        const gh=document.createElement('tr');gh.className='grp';
+        gh.innerHTML=`<td colspan="7">FY ${fy} &nbsp;·&nbsp; ${fyRows.length} months &nbsp;·&nbsp; net ${fmtM(fyNet)}</td>`;
+        body.appendChild(gh);
+        fyRows.forEach(r=>{
+          const aName=curAcct==='all'?'All accounts':accounts[curAcct];
+          const tr=document.createElement('tr');tr.className='data-row';
+          tr.innerHTML=`
+            <td style="font-weight:500">${fmtMo(r)}</td>
+            <td style="color:var(--text-muted);font-size:12px">${aName}</td>
+            <td class="pos">${fmtM(r.ar)}</td>
+            <td class="neg">${fmtM(r.ap)}</td>
+            <td style="color:#0C447C">${r.cr>0?fmtM(r.cr):'—'}</td>
+            <td class="${r.net>=0?'pos':'neg'}">${fmtM(r.net)}</td>
+            <td class="muted">${r.cnt}</td>`;
+          body.appendChild(tr);
+        });
+        const sr=document.createElement('tr');sr.className='sub';
+        const fyN=fyAR-fyAP-fyCR;
+        sr.innerHTML=`<td colspan="2" style="text-align:left;color:var(--text-secondary)">FY ${fy} total</td><td class="pos">${fmtM(fyAR)}</td><td class="neg">${fmtM(fyAP)}</td><td style="color:#0C447C">${fyCR>0?fmtM(fyCR):'—'}</td><td class="${fyN>=0?'pos':'neg'}">${fmtM(fyN)}</td><td class="muted">${fyCnt}</td>`;
+        body.appendChild(sr);
+      });
+
+      const gAR=gRows.reduce((a,r)=>a+r.ar,0);
+      const gAP=gRows.reduce((a,r)=>a+r.ap,0);
+      const gCR=gRows.reduce((a,r)=>a+r.cr,0);
+      const gN=gAR-gAP-gCR;
+      const gCnt=gRows.reduce((a,r)=>a+r.cnt,0);
+      const gr=document.createElement('tr');gr.className='grand';
+      gr.innerHTML=`<td colspan="2">Total</td><td>${fmtM(gAR)}</td><td>${fmtM(gAP)}</td><td>${gCR>0?fmtM(gCR):'—'}</td><td>${fmtM(gN)}</td><td>${gCnt}</td>`;
+      body.appendChild(gr);
+    }
+
+    function changeProj(val){curProj=val;render();}
+    function selAcct(v){curAcct=v;render();}
+    function selType(t,btn){document.querySelectorAll('.ctrl-row:nth-child(3) .fb').forEach(b=>b.classList.remove('on'));btn.classList.add('on');curType=t;render();}
+    function changeFY(val){curFY=val==='all'?'all':parseInt(val);render();}
+
+    render();
+    </script>
+</body>
+</html>

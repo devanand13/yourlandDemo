@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>YourLand Developments — AP / AR Aging</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tabler-icons/2.44.0/iconfont/tabler-icons.min.css">
+<style>
+
+:root{
+  --ink:#1B1B23; --ink-soft:#3A3A44; --paper:#FAFAF9;
+  --surface-0:#EDEDED; --surface-1:#F3F3F2; --surface-2:#FFFFFF;
+  --border:#E3E3E2; --border-strong:#C9C9C9; --muted:#69727D;
+  --brass:#FF8600; --brass-soft:#FFE7CC;
+  --forest:#2E6B4F; --forest-soft:#E7F0EA;
+  --amber:#D9691E; --amber-soft:#FDE9DA;
+  --rust:#B0492E; --rust-soft:#F6E7E1;
+  --rust-dark:#7A2E1C; --rust-dark-soft:#F1DDD6;
+  --radius:10px; --radius-lg:16px;
+  --shadow:0 1px 2px rgba(27,27,35,.05), 0 6px 20px -8px rgba(27,27,35,.12);
+  --font-display:'Fraunces', Georgia, serif;
+  --font-sans:'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono:'IBM Plex Mono', ui-monospace, monospace;
+
+  --text-primary: var(--ink);
+  --text-secondary: var(--ink-soft);
+  --text-muted: var(--muted);
+
+  --nav-h:64px;
+}
+
+
+*{box-sizing:border-box}
+html,body{background:var(--paper);margin:0;padding:0;}
+body{font-family:var(--font-sans);color:var(--ink);-webkit-font-smoothing:antialiased;}
+
+.app-nav{
+  display:flex;align-items:center;gap:14px;
+  height:var(--nav-h);padding:0 28px;
+  background:var(--surface-2);
+  border-bottom:1px solid var(--border);
+}
+.app-logo{height:26px;width:auto;display:block;}
+.app-nav-div{width:1px;height:26px;background:var(--border-strong);}
+.app-nav-title{font-family:var(--font-mono);font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);font-weight:500;}
+
+#panel-aging .wrap{padding-left:0;padding-right:0;max-width:1180px;margin:0 auto;padding-top:2.75rem;}
+
+#panel-aging *{box-sizing:border-box;margin:0;padding:0}
+#panel-aging .wrap{padding:1.5rem 0;font-family:var(--font-sans)}
+#panel-aging .topbar{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1.25rem;gap:12px}
+#panel-aging .t1{font-size:18px;font-weight:500;color:var(--text-primary)}
+#panel-aging .t2{font-size:13px;color:var(--text-muted);margin-top:3px}
+#panel-aging .badge{font-size:11px;color:var(--text-muted);border:0.5px solid var(--border);border-radius:20px;padding:4px 12px;white-space:nowrap}
+#panel-aging .proj-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1.25rem;align-items:center}
+#panel-aging .proj-lbl{font-size:12px;color:var(--text-muted);margin-right:4px}
+#panel-aging .pb{font-size:12px;font-weight:500;padding:5px 13px;border-radius:20px;border:0.5px solid var(--border-strong);background:transparent;color:var(--text-secondary);cursor:pointer}
+#panel-aging .pb:hover{background:var(--surface-1)}
+#panel-aging .pb.on{background:#FFE7CC;color:#7A5A28;border-color:#FF8600}
+#panel-aging .type-row{display:flex;gap:8px;margin-bottom:1.25rem}
+#panel-aging .tb{font-size:13px;font-weight:500;padding:7px 16px;border-radius:var(--radius);border:0.5px solid var(--border-strong);background:transparent;color:var(--text-secondary);cursor:pointer}
+#panel-aging .tb.on{background:#FF8600;color:#fff;border-color:#FF8600}
+#panel-aging .kpis{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin-bottom:1.5rem}
+#panel-aging .kpi{background:var(--surface-1);border-radius:var(--radius);padding:12px 14px}
+#panel-aging .kpi-l{font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px}
+#panel-aging .kpi-v{font-size:20px;font-weight:500;color:var(--text-primary);font-variant-numeric:tabular-nums}
+#panel-aging .kpi-v.warn{color:#D9691E}
+#panel-aging .kpi-v.danger{color:#7A2E1C}
+#panel-aging .kpi-v.ok{color:#2E6B4F}
+#panel-aging .legend{display:flex;gap:16px;margin-bottom:10px;flex-wrap:wrap}
+#panel-aging .leg{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text-secondary)}
+#panel-aging .leg-sq{width:10px;height:10px;border-radius:2px;flex-shrink:0}
+#panel-aging .chart-box{position:relative;width:100%;height:280px;margin-bottom:1.5rem}
+#panel-aging .section-l{font-size:11px;font-weight:500;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px}
+#panel-aging .tbl-scroll{overflow-x:auto}
+#panel-aging table{width:100%;border-collapse:collapse;font-size:13px;table-layout:fixed}
+#panel-aging th{font-size:11px;font-weight:500;color:var(--text-muted);text-align:right;padding:0 10px 8px;border-bottom:0.5px solid var(--border);white-space:nowrap}
+#panel-aging th:first-child, #panel-aging th:nth-child(2){text-align:left}
+#panel-aging td{padding:9px 10px;text-align:right;border-bottom:0.5px solid var(--border);color:var(--text-primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-variant-numeric:tabular-nums}
+#panel-aging td:first-child, #panel-aging td:nth-child(2){text-align:left}
+#panel-aging tr.grand td{font-weight:500;background:#FFE7CC;color:#1B1B23;border-top:2px solid #FF8600}
+#panel-aging tr:last-child td{border-bottom:none}
+#panel-aging .pill{display:inline-flex;font-size:10px;font-weight:500;padding:2px 8px;border-radius:20px}
+#panel-aging .pill-cur{background:#E7F0EA;color:#2E6B4F}
+#panel-aging .pill-30{background:#FFE7CC;color:#7A5A28}
+#panel-aging .pill-60{background:#FDE9DA;color:#7A3510}
+#panel-aging .pill-90{background:#F6E7E1;color:#B0492E}
+#panel-aging .pill-90p{background:#7A2E1C;color:#fff}
+#panel-aging .muted{color:var(--text-muted)}
+</style>
+</head>
+<body>
+<nav class="app-nav">
+  <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="app-logo" height="26" viewBox="0 0 178.23 35.737">
+  <defs>
+    <clipPath id="clip-path">
+      <path id="Path_13" data-name="Path 13" d="M0-9.164H178.23V-44.9H0Z" transform="translate(0 44.901)" fill="none"></path>
+    </clipPath>
+  </defs>
+  <g id="Group_25" data-name="Group 25" transform="translate(0 44.901)">
+    <g id="Group_13" data-name="Group 13" transform="translate(0 -44.901)" clip-path="url(#clip-path)">
+      <g id="Group_1" data-name="Group 1" transform="translate(16.567 4.692)">
+        <path id="Path_1" data-name="Path 1" d="M-2.858,0H-8.61A5.4,5.4,0,0,0-14,5.391v5.752a5.4,5.4,0,0,0,5.391,5.4h5.752a5.4,5.4,0,0,0,5.391-5.4V5.391A5.4,5.4,0,0,0-2.858,0m1.8,11.143a1.8,1.8,0,0,1-1.8,1.8H-8.61a1.8,1.8,0,0,1-1.8-1.8V5.391a1.8,1.8,0,0,1,1.8-1.8h5.752a1.8,1.8,0,0,1,1.8,1.8Z" transform="translate(14.001)" fill="#ff8600"></path>
+      </g>
+      <g id="Group_2" data-name="Group 2" transform="translate(53.986 4.693)">
+        <path id="Path_2" data-name="Path 2" d="M0-1.383V9.237a.506.506,0,0,0,.505.505H3.09a.505.505,0,0,0,.5-.505V-1.383a1.8,1.8,0,0,1,1.8-1.8h6.146a.506.506,0,0,0,.505-.505V-6.269a.506.506,0,0,0-.505-.505H5.391A5.4,5.4,0,0,0,0-1.383" transform="translate(0 6.774)" fill="#ff8600"></path>
+      </g>
+      <g id="Group_3" data-name="Group 3" transform="translate(68.689 0)">
+        <path id="Path_3" data-name="Path 3" d="M-.922-4.057V-19.37a.506.506,0,0,0-.505-.505H-4.011a.506.506,0,0,0-.505.505V-4.057A5.391,5.391,0,0,0,.875,1.335H7.381a.505.505,0,0,0,.505-.5V-1.754a.506.506,0,0,0-.505-.505H.875a1.8,1.8,0,0,1-1.8-1.8" transform="translate(4.516 19.875)" fill="#ff8600"></path>
+      </g>
+      <g id="Group_4" data-name="Group 4" transform="translate(35.063 4.7)">
+        <path id="Path_4" data-name="Path 4" d="M-3.318-2.856a1.8,1.8,0,0,1-1.8,1.8h-5.752a1.8,1.8,0,0,1-1.8-1.8V-13.487a.506.506,0,0,0-.505-.505h-2.585a.5.5,0,0,0-.5.505V-2.856a5.39,5.39,0,0,0,5.391,5.391h5.752A5.391,5.391,0,0,0,.276-2.856V-13.487a.506.506,0,0,0-.505-.505H-2.813a.506.506,0,0,0-.505.505Z" transform="translate(16.258 13.992)" fill="#ff8600"></path>
+      </g>
+      <g id="Group_5" data-name="Group 5" transform="translate(101.299 4.692)">
+        <path id="Path_5" data-name="Path 5" d="M-2.858,0H-8.61A5.391,5.391,0,0,0-14,5.391V16.015a.505.505,0,0,0,.505.5h2.584a.5.5,0,0,0,.5-.5V5.391a1.8,1.8,0,0,1,1.8-1.8h5.752a1.8,1.8,0,0,1,1.8,1.8V16.015a.5.5,0,0,0,.505.5H2.029a.5.5,0,0,0,.5-.5V5.391A5.4,5.4,0,0,0-2.858,0" transform="translate(14.001)" fill="#ff8600"></path>
+      </g>
+      <g id="Group_6" data-name="Group 6" transform="translate(82.393 4.7)">
+        <path id="Path_6" data-name="Path 6" d="M-3.12,0h-9.863a.5.5,0,0,0-.5.5V3.089a.505.505,0,0,0,.5.505H-3.12a.776.776,0,0,1,.776.78V5.637H-9.633a5.6,5.6,0,0,0-5.582,4.586,5.4,5.4,0,0,0,5.321,6.29h5.752a5.4,5.4,0,0,0,5.4-5.4V4.37A4.378,4.378,0,0,0-3.12,0m.776,11.117a1.8,1.8,0,0,1-1.8,1.8H-9.893a1.8,1.8,0,0,1-1.8-1.8A1.889,1.889,0,0,1-9.8,9.231h7.46Z" transform="translate(15.286)" fill="#ff8600"></path>
+      </g>
+      <g id="Group_7" data-name="Group 7" transform="translate(120.263 0)">
+        <path id="Path_7" data-name="Path 7" d="M-3.319-.13V4.349a5.342,5.342,0,0,0-1.8-.309h-5.752A5.392,5.392,0,0,0-16.26,9.432v5.751a5.391,5.391,0,0,0,5.392,5.391h5.752A5.391,5.391,0,0,0,.276,15.183V-.13A.506.506,0,0,0-.23-.635H-2.814a.505.505,0,0,0-.5.505m0,15.313a1.8,1.8,0,0,1-1.8,1.8h-5.752a1.8,1.8,0,0,1-1.8-1.8V9.432a1.8,1.8,0,0,1,1.8-1.8h5.752a1.8,1.8,0,0,1,1.8,1.8v5.751Z" transform="translate(16.26 0.635)" fill="#ff8600"></path>
+      </g>
+      <g id="Group_8" data-name="Group 8" transform="translate(0 0.022)">
+        <path id="Path_8" data-name="Path 8" d="M-3.916-.053-9.6,7.808-15.278-.053a.513.513,0,0,0-.408-.208H-18.8a.388.388,0,0,0-.315.616l7.664,10.564v9.506a.505.505,0,0,0,.505.5h2.685a.505.505,0,0,0,.505-.5V10.863L-.087.355A.388.388,0,0,0-.4-.261H-3.507a.512.512,0,0,0-.408.208" transform="translate(19.185 0.261)" fill="#ff8600"></path>
+      </g>
+      <g id="Group_9" data-name="Group 9" transform="translate(152.114 7.397)">
+        <path id="Path_9" data-name="Path 9" d="M-3.992-2.824a2.519,2.519,0,0,1-1.788.741,2.518,2.518,0,0,1-1.785-.741L-18.373-13.631a.692.692,0,0,0-.491-.2.694.694,0,0,0-.7.7.692.692,0,0,0,.2.491L-8.577-1.865A2.519,2.519,0,0,1-7.838-.076V12.188a.2.2,0,0,0,.195.2H5.927a.525.525,0,0,0,.523-.524V-12.8a.2.2,0,0,0-.332-.136Z" transform="translate(19.561 13.834)" fill="#ff8600"></path>
+      </g>
+      <g id="Group_10" data-name="Group 10" transform="translate(144.498 0)">
+        <path id="Path_10" data-name="Path 10" d="M-.133-8.62H13.44a.194.194,0,0,0,.193-.192V-20.032L3.592-30.076A5.868,5.868,0,0,1,2.6-37,4.951,4.951,0,0,1,4.96-39.275a5.862,5.862,0,0,1,6.764,1.07l9.019,9.018L32.929-41.377a.5.5,0,0,0-.353-.856H-.133a.523.523,0,0,0-.521.524V-9.14a.52.52,0,0,0,.521.521" transform="translate(0.654 42.233)" fill="#ff8600"></path>
+      </g>
+      <g id="Group_11" data-name="Group 11" transform="translate(68.689 25.918)">
+        <path id="Path_11" data-name="Path 11" d="M-.7-1.753a4.252,4.252,0,0,0,.43-.029,2.471,2.471,0,0,0,.551-.128,2.453,2.453,0,0,0,.575-.3,1.933,1.933,0,0,0,.513-.527,2.976,2.976,0,0,0,.371-.835,4.424,4.424,0,0,0,.145-1.214,5.151,5.151,0,0,0-.135-1.234,2.367,2.367,0,0,0-.44-.925,1.966,1.966,0,0,0-.794-.584,3.19,3.19,0,0,0-1.2-.2H-2.4v5.971ZM-.785-8.587a3.836,3.836,0,0,1,2.737.907,3.622,3.622,0,0,1,.959,2.758A6.243,6.243,0,0,1,2.694-3.2a3.215,3.215,0,0,1-.668,1.259,2.907,2.907,0,0,1-1.153.782,4.609,4.609,0,0,1-1.659.27H-3.427v-7.7Z" transform="translate(3.427 8.587)" fill="#ff8600"></path>
+      </g>
+      <g id="Group_12" data-name="Group 12" transform="translate(75.823 27.913)">
+        <path id="Path_12" data-name="Path 12" d="M-1.032-.453a1.534,1.534,0,0,0-.334-.5,1.578,1.578,0,0,0-.5-.334,1.573,1.573,0,0,0-.63-.126,1.611,1.611,0,0,0-.642.126,1.484,1.484,0,0,0-.49.34,1.638,1.638,0,0,0-.322.5,1.9,1.9,0,0,0-.14.61h3.2a1.841,1.841,0,0,0-.145-.614m.221,3.578A2.53,2.53,0,0,1-2.384,3.6a2.855,2.855,0,0,1-1.16-.216,2.275,2.275,0,0,1-.824-.6,2.517,2.517,0,0,1-.5-.926A4.463,4.463,0,0,1-5.058.678,3.347,3.347,0,0,1-4.864-.487,2.764,2.764,0,0,1-4.319-1.4a2.464,2.464,0,0,1,.83-.6,2.539,2.539,0,0,1,1.051-.215,2.306,2.306,0,0,1,1.234.3,2.467,2.467,0,0,1,.786.782A3.1,3.1,0,0,1-.008-.1,4.464,4.464,0,0,1,.083.968h-4.17a2.185,2.185,0,0,0,.086.7,1.569,1.569,0,0,0,.312.581,1.532,1.532,0,0,0,.55.4,1.892,1.892,0,0,0,.787.151,1.585,1.585,0,0,0,.953-.27,1.3,1.3,0,0,0,.489-.819H0A2.233,2.233,0,0,1-.811,3.125" transform="translate(5.058 2.221)" fill="#ff8600"></path>
+      </g>
+    </g>
+    <g id="Group_14" data-name="Group 14" transform="translate(81.373 -16.859)">
+      <path id="Path_14" data-name="Path 14" d="M-.531-1.429-2.6-7h1.024L-.013-2.356H.009L1.528-7h.958L.451-1.429Z" transform="translate(2.6 7.001)" fill="#ff8600"></path>
+    </g>
+    <g id="Group_16" data-name="Group 16" transform="translate(0 -44.901)" clip-path="url(#clip-path)">
+      <g id="Group_15" data-name="Group 15" transform="translate(86.999 27.913)">
+        <path id="Path_15" data-name="Path 15" d="M-1.032-.453a1.521,1.521,0,0,0-.334-.5,1.578,1.578,0,0,0-.5-.334,1.573,1.573,0,0,0-.63-.126,1.6,1.6,0,0,0-.641.126,1.476,1.476,0,0,0-.49.34,1.626,1.626,0,0,0-.323.5,1.9,1.9,0,0,0-.14.61h3.2a1.841,1.841,0,0,0-.145-.614m.221,3.578A2.53,2.53,0,0,1-2.384,3.6a2.855,2.855,0,0,1-1.16-.216,2.275,2.275,0,0,1-.824-.6,2.517,2.517,0,0,1-.5-.926A4.464,4.464,0,0,1-5.057.678,3.347,3.347,0,0,1-4.864-.487,2.764,2.764,0,0,1-4.319-1.4a2.464,2.464,0,0,1,.83-.6,2.539,2.539,0,0,1,1.051-.215,2.306,2.306,0,0,1,1.234.3,2.467,2.467,0,0,1,.786.782A3.114,3.114,0,0,1-.008-.1,4.507,4.507,0,0,1,.084.968h-4.17a2.185,2.185,0,0,0,.086.7,1.559,1.559,0,0,0,.313.581,1.519,1.519,0,0,0,.55.4,1.886,1.886,0,0,0,.786.151,1.585,1.585,0,0,0,.953-.27,1.3,1.3,0,0,0,.489-.819H0A2.233,2.233,0,0,1-.811,3.125" transform="translate(5.057 2.221)" fill="#ff8600"></path>
+      </g>
+    </g>
+    <path id="Path_17" data-name="Path 17" d="M117.943-4.641h-.915v-7.7h.915Z" transform="translate(-23.886 -6.646)" fill="#ff8600"></path>
+    <g id="Group_24" data-name="Group 24" transform="translate(0 -44.901)" clip-path="url(#clip-path)">
+      <g id="Group_17" data-name="Group 17" transform="translate(95.18 27.912)">
+        <path id="Path_18" data-name="Path 18" d="M-.283-.979a1.878,1.878,0,0,0,.372.658,1.584,1.584,0,0,0,.555.4,1.628,1.628,0,0,0,.674.142A1.635,1.635,0,0,0,1.992.082a1.576,1.576,0,0,0,.555-.4,1.866,1.866,0,0,0,.372-.658,2.755,2.755,0,0,0,.135-.9,2.776,2.776,0,0,0-.135-.9,1.951,1.951,0,0,0-.372-.662,1.563,1.563,0,0,0-.555-.409,1.674,1.674,0,0,0-.673-.142,1.667,1.667,0,0,0-.674.142,1.57,1.57,0,0,0-.555.409,1.964,1.964,0,0,0-.372.662,2.777,2.777,0,0,0-.134.9,2.755,2.755,0,0,0,.134.9m-.932-2.045A2.586,2.586,0,0,1-.7-3.954a2.441,2.441,0,0,1,.851-.619A2.825,2.825,0,0,1,1.318-4.8a2.817,2.817,0,0,1,1.169.226,2.475,2.475,0,0,1,.846.619,2.571,2.571,0,0,1,.517.929,3.682,3.682,0,0,1,.172,1.146A3.646,3.646,0,0,1,3.85-.735a2.58,2.58,0,0,1-.517.92A2.383,2.383,0,0,1,2.487.8a2.9,2.9,0,0,1-1.169.221A2.9,2.9,0,0,1,.154.8,2.352,2.352,0,0,1-.7.185a2.6,2.6,0,0,1-.518-.92,3.669,3.669,0,0,1-.172-1.144,3.706,3.706,0,0,1,.172-1.146" transform="translate(1.387 4.799)" fill="#ff8600"></path>
+      </g>
+      <g id="Group_18" data-name="Group 18" transform="translate(101.699 27.912)">
+        <path id="Path_19" data-name="Path 19" d="M-1.079-.54A2.039,2.039,0,0,0-1.392-1.2a1.487,1.487,0,0,0-.539-.462,1.619,1.619,0,0,0-.77-.175,1.562,1.562,0,0,0-.786.185,1.556,1.556,0,0,0-.528.478,2.04,2.04,0,0,0-.3.674A3.22,3.22,0,0,0-4.4.262a3.222,3.222,0,0,0,.1.792A1.954,1.954,0,0,0-4,1.727a1.56,1.56,0,0,0,.544.47,1.714,1.714,0,0,0,.809.177,1.581,1.581,0,0,0,.793-.183,1.494,1.494,0,0,0,.511-.485,2.114,2.114,0,0,0,.281-.689,3.685,3.685,0,0,0,.085-.8,2.806,2.806,0,0,0-.1-.758M-4.371-2.519v.755h.021a1.371,1.371,0,0,1,.712-.674,2.635,2.635,0,0,1,1.067-.21,2.53,2.53,0,0,1,1.126.236,2.308,2.308,0,0,1,.8.643,2.812,2.812,0,0,1,.479.93A3.8,3.8,0,0,1-.005.282,3.911,3.911,0,0,1-.163,1.4a2.635,2.635,0,0,1-.474.922,2.26,2.26,0,0,1-.8.62,2.584,2.584,0,0,1-1.116.225,2.892,2.892,0,0,1-.459-.043,2.638,2.638,0,0,1-.5-.138,2.026,2.026,0,0,1-.468-.265A1.466,1.466,0,0,1-4.35,2.31h-.021V5.176h-.916V-2.519Z" transform="translate(5.287 2.648)" fill="#ff8600"></path>
+      </g>
+      <g id="Group_19" data-name="Group 19" transform="translate(108.059 27.913)">
+        <path id="Path_20" data-name="Path 20" d="M-.221-.033V.788H-.2A2.024,2.024,0,0,1,1.6-.161a2.017,2.017,0,0,1,.937.216A1.206,1.206,0,0,1,3.13.788a1.961,1.961,0,0,1,.739-.7A2.1,2.1,0,0,1,4.876-.161a2.9,2.9,0,0,1,.759.092,1.524,1.524,0,0,1,.583.286,1.268,1.268,0,0,1,.376.5,1.818,1.818,0,0,1,.135.738V5.539H5.814V1.888A2.688,2.688,0,0,0,5.77,1.4a.974.974,0,0,0-.162-.393.814.814,0,0,0-.33-.265,1.32,1.32,0,0,0-.543-.1,1.452,1.452,0,0,0-1.067.388,1.4,1.4,0,0,0-.388,1.035v3.47H2.365V1.888a2.288,2.288,0,0,0-.049-.5A1.026,1.026,0,0,0,2.149,1,.773.773,0,0,0,1.832.738,1.216,1.216,0,0,0,1.32.646,1.368,1.368,0,0,0,.635.808,1.588,1.588,0,0,0,.172,1.2a1.571,1.571,0,0,0-.259.471,1.318,1.318,0,0,0-.08.4v3.47h-.915V-.033Z" transform="translate(1.083 0.161)" fill="#ff8600"></path>
+      </g>
+      <g id="Group_20" data-name="Group 20" transform="translate(116.949 27.913)">
+        <path id="Path_21" data-name="Path 21" d="M-1.032-.453a1.521,1.521,0,0,0-.334-.5,1.578,1.578,0,0,0-.5-.334,1.573,1.573,0,0,0-.63-.126,1.6,1.6,0,0,0-.641.126,1.468,1.468,0,0,0-.49.34,1.626,1.626,0,0,0-.323.5,1.9,1.9,0,0,0-.14.61h3.2a1.841,1.841,0,0,0-.145-.614m.221,3.578A2.53,2.53,0,0,1-2.384,3.6a2.855,2.855,0,0,1-1.16-.216,2.275,2.275,0,0,1-.824-.6,2.517,2.517,0,0,1-.5-.926A4.463,4.463,0,0,1-5.058.678,3.347,3.347,0,0,1-4.864-.487,2.764,2.764,0,0,1-4.319-1.4a2.464,2.464,0,0,1,.83-.6,2.539,2.539,0,0,1,1.051-.215,2.306,2.306,0,0,1,1.234.3,2.467,2.467,0,0,1,.786.782A3.114,3.114,0,0,1-.008-.1,4.464,4.464,0,0,1,.083.968h-4.17a2.185,2.185,0,0,0,.086.7,1.559,1.559,0,0,0,.313.581,1.522,1.522,0,0,0,.549.4,1.892,1.892,0,0,0,.787.151,1.585,1.585,0,0,0,.953-.27,1.3,1.3,0,0,0,.489-.819H0A2.233,2.233,0,0,1-.811,3.125" transform="translate(5.058 2.221)" fill="#ff8600"></path>
+      </g>
+      <g id="Group_21" data-name="Group 21" transform="translate(123.039 27.913)">
+        <path id="Path_22" data-name="Path 22" d="M-.221-.033V.851H-.2A1.928,1.928,0,0,1,1.61-.161a2.422,2.422,0,0,1,.916.151A1.5,1.5,0,0,1,3.119.41a1.577,1.577,0,0,1,.318.642,3.416,3.416,0,0,1,.092.822V5.539H2.613V1.769a1.1,1.1,0,0,0-.3-.82,1.125,1.125,0,0,0-.83-.3A1.83,1.83,0,0,0,.753.777a1.364,1.364,0,0,0-.512.365A1.614,1.614,0,0,0-.066,1.7a2.271,2.271,0,0,0-.1.7V5.539h-.914V-.033Z" transform="translate(1.083 0.161)" fill="#ff8600"></path>
+      </g>
+      <g id="Group_22" data-name="Group 22" transform="translate(128.436 26.37)">
+        <path id="Path_23" data-name="Path 23" d="M-.763-.428v.81h-1.11V3.841a.968.968,0,0,0,.027.257.275.275,0,0,0,.1.152.444.444,0,0,0,.209.069,3.121,3.121,0,0,0,.351.018h.42v.807h-.7a3.2,3.2,0,0,1-.61-.049.883.883,0,0,1-.409-.177.755.755,0,0,1-.232-.367,2.112,2.112,0,0,1-.076-.626V.382h-.948v-.81h.948V-2.1h.917V-.428Z" transform="translate(3.738 2.099)" fill="#ff8600"></path>
+      </g>
+      <g id="Group_23" data-name="Group 23" transform="translate(132.068 27.913)">
+        <path id="Path_24" data-name="Path 24" d="M-.271-1.143a.994.994,0,0,0,.339.334,1.521,1.521,0,0,0,.474.177,2.668,2.668,0,0,0,.544.055A3.142,3.142,0,0,0,1.54-.611a1.615,1.615,0,0,0,.436-.119A.807.807,0,0,0,2.3-.981a.684.684,0,0,0,.13-.427.611.611,0,0,0-.27-.539,2.3,2.3,0,0,0-.673-.3c-.27-.075-.563-.145-.879-.206a4.479,4.479,0,0,1-.878-.257,1.825,1.825,0,0,1-.673-.47,1.213,1.213,0,0,1-.27-.84,1.332,1.332,0,0,1,.189-.722,1.534,1.534,0,0,1,.484-.489,2.2,2.2,0,0,1,.669-.28A3.035,3.035,0,0,1,.872-5.6a4.385,4.385,0,0,1,.872.08,2.054,2.054,0,0,1,.706.28,1.466,1.466,0,0,1,.49.54,2.03,2.03,0,0,1,.215.846H2.24A.934.934,0,0,0,2.1-4.3a.935.935,0,0,0-.3-.286,1.4,1.4,0,0,0-.4-.157,2.212,2.212,0,0,0-.447-.049,2.844,2.844,0,0,0-.415.033,1.353,1.353,0,0,0-.382.113.768.768,0,0,0-.28.216.542.542,0,0,0-.108.349.509.509,0,0,0,.168.393,1.327,1.327,0,0,0,.424.259,3.752,3.752,0,0,0,.583.172c.216.046.431.1.646.146a6.341,6.341,0,0,1,.673.183,2.148,2.148,0,0,1,.583.286,1.385,1.385,0,0,1,.41.446,1.317,1.317,0,0,1,.156.669,1.556,1.556,0,0,1-.21.84,1.651,1.651,0,0,1-.55.54A2.325,2.325,0,0,1,1.879.14a4.6,4.6,0,0,1-.848.08,3.793,3.793,0,0,1-.883-.1A2.182,2.182,0,0,1-.595-.194a1.623,1.623,0,0,1-.517-.584,2,2,0,0,1-.216-.875h.917a1.031,1.031,0,0,0,.14.511" transform="translate(1.328 5.6)" fill="#ff8600"></path>
+      </g>
+    </g>
+  </g>
+</svg>
+  <div class="app-nav-div"></div>
+  <div class="app-nav-title">Reporting &middot; NTT Property Development</div>
+</nav>
+
+<section id="panel-aging">
+<h2 class="sr-only">NTT Property Development AP/AR aging report showing outstanding agingInvoices by contact and aging bucket across multiple agingProjects, with project selector and AR/AP tabs.</h2>
+
+
+<div class="wrap">
+  <div class="topbar">
+    <div>
+      <div class="t1"><i class="ti ti-file-invoice" style="font-size:16px;vertical-align:-2px;margin-right:6px" aria-hidden="true"></i>AP / AR aging</div>
+      <div class="t2" id="agingSubTitle">As at 3 July 2026 &nbsp;·&nbsp; NTT Property Development</div>
+    </div>
+    <span class="badge">Illustrative — for discussion only</span>
+  </div>
+
+  <div class="proj-row">
+    <span class="proj-lbl"><i class="ti ti-building" style="font-size:13px;vertical-align:-1px;margin-right:3px" aria-hidden="true"></i>Project</span>
+    <button class="pb on" onclick="agingSelectProject('all',this)">All agingProjects</button>
+    <button class="pb" onclick="agingSelectProject('P1',this)">Ridgeway Estate</button>
+    <button class="pb" onclick="agingSelectProject('P2',this)">Bayside Gardens</button>
+    <button class="pb" onclick="agingSelectProject('P3',this)">North Haven</button>
+    <button class="pb" onclick="agingSelectProject('P4',this)">Greenfield Park</button>
+  </div>
+
+  <div class="type-row">
+    <button class="tb on" onclick="agingSelectType('AR',this)"><i class="ti ti-arrow-down-circle" style="font-size:14px;vertical-align:-2px;margin-right:5px" aria-hidden="true"></i>Accounts receivable (AR)</button>
+    <button class="tb" onclick="agingSelectType('AP',this)"><i class="ti ti-arrow-up-circle" style="font-size:14px;vertical-align:-2px;margin-right:5px" aria-hidden="true"></i>Accounts payable (AP)</button>
+  </div>
+
+  <div class="kpis">
+    <div class="kpi"><div class="kpi-l">Total outstanding</div><div class="kpi-v" id="agingKTot">—</div></div>
+    <div class="kpi"><div class="kpi-l">Current</div><div class="kpi-v ok" id="agingKCur">—</div></div>
+    <div class="kpi"><div class="kpi-l">1–30 days</div><div class="kpi-v warn" id="agingK30">—</div></div>
+    <div class="kpi"><div class="kpi-l">31–90 days</div><div class="kpi-v warn" id="agingK60">—</div></div>
+    <div class="kpi"><div class="kpi-l">Over 90 days</div><div class="kpi-v danger" id="agingK90">—</div></div>
+  </div>
+
+  <div class="legend" style="justify-content:space-between">
+    <div style="display:flex;gap:16px;flex-wrap:wrap">
+      <span class="leg"><span class="leg-sq" style="background:#2E6B4F"></span>Current</span>
+      <span class="leg"><span class="leg-sq" style="background:#FF8600"></span>1–30 days</span>
+      <span class="leg"><span class="leg-sq" style="background:#D9691E"></span>31–60 days</span>
+      <span class="leg"><span class="leg-sq" style="background:#B0492E"></span>61–90 days</span>
+      <span class="leg"><span class="leg-sq" style="background:#7A2E1C"></span>Over 90 days</span>
+    </div>
+    <span class="muted" style="font-size:11px">Top 6 contacts by outstanding &middot; </span>
+  </div>
+  <div class="chart-box"><canvas id="agingChart" role="img" aria-label="Horizontal stacked bar chart of the largest outstanding contacts by aging bucket, with remaining contacts grouped as Other">Outstanding invoice amounts for the largest contacts.</canvas></div>
+
+  <div class="section-l">Invoice breakdown</div>
+  <div class="tbl-scroll">
+    <table>
+      <colgroup>
+        <col style="width:140px"><col style="width:120px"><col style="width:80px">
+        <col style="width:90px"><col style="width:90px"><col style="width:90px"><col style="width:100px">
+      </colgroup>
+      <thead><tr>
+        <th>Contact</th><th>Stage</th><th>Lot</th>
+        <th>Amount due</th><th>Invoice date</th><th>Due date</th><th>Aging</th>
+      </tr></thead>
+      <tbody id="agingTbody"></tbody>
+    </table>
+  </div>
+</div>
+</section>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+function agingFmt(n){if(!n||n===0)return'—';return'$'+Math.round(n).toLocaleString();}
+function agingFmtK(n){if(!n||n===0)return'—';const a=Math.abs(n);return(n<0?'-':'')+'$'+(a>=1000000?(a/1000000).toFixed(2)+'M':(a/1000).toFixed(1)+'k');}
+
+const agingProjects={
+  P1:{name:'Ridgeway Estate',tid:'02d26831-a0f0-4ae7-a2e7-a8a576775fdd'},
+  P2:{name:'Bayside Gardens',tid:'a9167fae-18a4-4dfc-91ec-04e896715447'},
+  P3:{name:'North Haven',tid:'f3c21a44-9b2e-4d7c-b8f1-6e3d5a2c9847'},
+  P4:{name:'Greenfield Park',tid:'d7e82b55-1c3f-4a8d-c9g2-7f4e6b3d0958'},
+};
+
+const agingArContacts=['Ridgeway Homes Pty Ltd','Bayside Developments','Greenfield Trust','Hamilton Smith Pty','City Agency','Maddox Group'];
+const agingApContacts=['ABC Civil Contractors','Landscape Plus Pty Ltd','Beck Legal Services','Ridgeway Utilities','PC Complete','Summit Earthworks'];
+const agingStages=['Stage 1','Stage 2','Stage 3','Project Wide','Unassigned'];
+const agingBuckets=['Current','1-30 days','31-60 days','61-90 days','Over 90 days'];
+const agingBucketColors=['#2E6B4F','#FF8600','#D9691E','#B0492E','#7A2E1C'];
+
+function agingRnd(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
+function agingRandDate(daysBack){const d=new Date();d.setDate(d.getDate()-agingRnd(0,daysBack));return d.toLocaleDateString('en-AU',{day:'2-digit',month:'2-digit',year:'numeric'});}
+
+const agingInvoices=[];
+['P1','P2','P3','P4'].forEach(pid=>{
+  agingArContacts.forEach((c,ci)=>{
+    const bucket=agingBuckets[agingRnd(0,4)];
+    const amt=agingRnd(5000,85000);
+    agingInvoices.push({pid,type:'AR',contact:c,stage:agingStages[ci%5],lot:`Lot ${200+agingRnd(1,99)}`,amount:amt,invDate:agingRandDate(180),dueDate:agingRandDate(120),bucket});
+  });
+  agingApContacts.forEach((c,ci)=>{
+    const bucket=['Current','Current','1-30 days','31-60 days','Unassigned'][ci]||'Current';
+    const realBucket=bucket==='Unassigned'?'Current':bucket;
+    const amt=agingRnd(2000,45000);
+    agingInvoices.push({pid,type:'AP',contact:c,stage:'Unassigned',lot:'—',amount:amt,invDate:agingRandDate(90),dueDate:agingRandDate(60),bucket:realBucket});
+  });
+});
+
+let agingCurrentProject='all';
+let agingCurrentType='AR';
+let agingChartInst=null;
+
+function agingGetFiltered(){
+  return agingInvoices.filter(r=>
+    (agingCurrentProject==='all'||r.pid===agingCurrentProject) && r.type===agingCurrentType
+  );
+}
+
+function agingPillClass(b){
+  if(b==='Current')return'pill-cur';
+  if(b==='1-30 days')return'pill-30';
+  if(b==='31-60 days')return'pill-60';
+  if(b==='61-90 days')return'pill-90';
+  return'pill-90p';
+}
+
+function agingUpdateKPIs(rows){
+  const tot=rows.reduce((a,r)=>a+r.amount,0);
+  const byBucket=b=>rows.filter(r=>r.bucket===b).reduce((a,r)=>a+r.amount,0);
+  document.getElementById('agingKTot').textContent=agingFmtK(tot);
+  document.getElementById('agingKCur').textContent=agingFmtK(byBucket('Current'));
+  document.getElementById('agingK30').textContent=agingFmtK(byBucket('1-30 days'));
+  document.getElementById('agingK60').textContent=agingFmtK((byBucket('31-60 days'))+(byBucket('61-90 days')));
+  document.getElementById('agingK90').textContent=agingFmtK(byBucket('Over 90 days'));
+}
+
+function agingUpdateChart(rows){
+  if(agingChartInst)agingChartInst.destroy();
+
+  // Aggregate total outstanding per contact, then show only the largest
+  // exposures individually — this keeps the chart readable no matter how
+  // many contacts exist (10 or 500).
+  const TOP_N=8;
+  const totals={};
+  rows.forEach(r=>{ totals[r.contact]=(totals[r.contact]||0)+r.amount; });
+  const rankedContacts=Object.keys(totals).sort((a,b)=>totals[b]-totals[a]);
+  const topContacts=rankedContacts.slice(0,TOP_N);
+  const otherContacts=rankedContacts.slice(TOP_N);
+
+  const labels=topContacts.map(c=>c.length>22?c.slice(0,20)+'…':c);
+  if(otherContacts.length>0) labels.push(`Other contacts (${otherContacts.length})`);
+
+  const datasets=agingBuckets.map((b,bi)=>{
+    const data=topContacts.map(c=>rows.filter(r=>r.contact===c&&r.bucket===b).reduce((a,r)=>a+r.amount,0));
+    if(otherContacts.length>0){
+      const otherSum=rows.filter(r=>otherContacts.includes(r.contact)&&r.bucket===b).reduce((a,r)=>a+r.amount,0);
+      data.push(otherSum);
+    }
+    return{
+      label:b,
+      data,
+      backgroundColor:agingBucketColors[bi],
+      borderRadius:2,borderSkipped:false
+    };
+  });
+
+  agingChartInst=new Chart(document.getElementById('agingChart'),{
+    type:'bar',
+    data:{labels,datasets},
+    options:{
+      indexAxis:'y',
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.dataset.label+': '+agingFmt(c.raw)}}},
+      scales:{
+        x:{stacked:true,grid:{color:'#E3E3E2',lineWidth:0.5},ticks:{font:{size:11},color:'#69727D',callback:v=>'$'+(v/1000).toFixed(0)+'k'}},
+        y:{stacked:true,grid:{display:false},ticks:{font:{size:11},color:'#69727D'}}
+      }
+    }
+  });
+}
+
+function agingUpdateTable(rows){
+  const body=document.getElementById('agingTbody');body.innerHTML='';
+  const sorted=[...rows].sort((a,b)=>b.amount-a.amount);
+  sorted.forEach(r=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`
+      <td style="font-weight:500;overflow:hidden;text-overflow:ellipsis" title="${r.contact}">${r.contact}</td>
+      <td style="color:var(--text-secondary)">${r.stage}</td>
+      <td style="color:var(--text-secondary)">${r.lot}</td>
+      <td>${agingFmt(r.amount)}</td>
+      <td style="color:var(--text-muted)">${r.invDate}</td>
+      <td style="color:var(--text-muted)">${r.dueDate}</td>
+      <td><span class="pill ${agingPillClass(r.bucket)}">${r.bucket}</span></td>`;
+    body.appendChild(tr);
+  });
+  const tot=rows.reduce((a,r)=>a+r.amount,0);
+  const gr=document.createElement('tr');gr.className='grand';
+  gr.innerHTML=`<td colspan="3">Total</td><td>${agingFmt(tot)}</td><td colspan="3"></td>`;
+  body.appendChild(gr);
+}
+
+function agingUpdateSubTitle(){
+  const pName=agingCurrentProject==='all'?'All agingProjects':agingProjects[agingCurrentProject].name;
+  document.getElementById('agingSubTitle').textContent=`As at 3 July 2026 · NTT Property Development · ${pName}`;
+}
+
+function agingRender(){
+  const rows=agingGetFiltered();
+  agingUpdateKPIs(rows);
+  agingUpdateChart(rows);
+  agingUpdateTable(rows);
+  agingUpdateSubTitle();
+}
+
+function agingSelectProject(pid,btn){
+  document.querySelectorAll('.pb').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  agingCurrentProject=pid;
+  agingRender();
+}
+
+function agingSelectType(type,btn){
+  document.querySelectorAll('.tb').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  agingCurrentType=type;
+  agingRender();
+}
+
+function initAging(){
+  agingRender();
+}
+
+initAging();
+
+</script>
+</body>
+</html>

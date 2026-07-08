@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cash Position by Account - YourLand Dashboard</title>
+    
+    <!-- CDNs -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.36.0/tabler-icons.min.css" rel="stylesheet">
+    
+    <!-- CSS styles -->
+    <link href="../css/style.css" rel="stylesheet">
+    <link href="../css/components.css" rel="stylesheet">
+    
+    <style>
+    .wrap{padding:0.5rem 0;font-family:var(--font-sans)}
+    .topbar{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1.5rem;gap:12px;border-bottom:0.5px solid var(--border);padding-bottom:1.25rem}
+    .titles .t1{font-size:18px;font-weight:500;color:var(--text-primary);display:flex;align-items:center;gap:8px}
+    .titles .t2{font-size:13px;color:var(--text-muted);margin-top:4px}
+    .badge{font-size:11px;color:var(--text-muted);border:0.5px solid var(--border);border-radius:20px;padding:4px 12px;white-space:nowrap;flex-shrink:0}
+    .controls{display:flex;flex-direction:column;gap:8px;margin-bottom:1.5rem}
+    .ctrl-row{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+    .ctrl-lbl{font-size:11px;font-weight:500;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;width:52px;flex-shrink:0}
+    .fb{font-size:12px;font-weight:500;padding:4px 12px;border-radius:20px;border:0.5px solid var(--border-strong);background:transparent;color:var(--text-secondary);cursor:pointer;transition:all .12s}
+    .fb:hover{background:var(--surface-1)}
+    .fb.on{background:#FFE7CC;color:#7A5A28;border-color:#FF8600}
+    select{font-size:12px;font-family:var(--font-sans);padding:4px 28px 4px 10px;border-radius:20px;border:0.5px solid var(--border-strong);background:var(--surface-1);color:var(--text-primary);cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23898781' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center}
+    .kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:1.5rem}
+    .kpi{background:var(--surface-1);border-radius:12px;padding:14px 16px;border:0.5px solid var(--border)}
+    .kpi-icon{font-size:18px;color:var(--text-muted);margin-bottom:8px}
+    .kpi-l{font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px}
+    .kpi-v{font-size:22px;font-weight:500;font-variant-numeric:tabular-nums;color:var(--text-primary)}
+    .kpi-v.ok{color:#3b6d11}
+    .kpi-v.warn{color:#854f0b}
+    .kpi-v.neg{color:#791f1f}
+    .kpi-sub{font-size:11px;color:var(--text-muted);margin-top:3px}
+    .acct-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:1.5rem}
+    .acct-card{background:var(--surface-1);border-radius:12px;border:0.5px solid var(--border);padding:14px 16px;cursor:pointer;transition:border-color .12s}
+    .acct-card:hover{border-color:var(--border-strong)}
+    .acct-card.selected{border-color:#0C447C;background:#E6F1FB}
+    .acct-card.dormant{opacity:.5}
+    .ac-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+    .ac-name{font-size:12px;font-weight:500;color:var(--text-primary)}
+    .ac-code{font-size:11px;color:var(--text-muted)}
+    .ac-val{font-size:18px;font-weight:500;font-variant-numeric:tabular-nums}
+    .ac-val.pos{color:#3b6d11}
+    .ac-val.neg{color:#791f1f}
+    .ac-val.zero{color:var(--text-muted)}
+    .ac-sub{font-size:11px;color:var(--text-muted);margin-top:3px}
+    .ac-bar{height:3px;border-radius:2px;background:var(--border);margin-top:10px;overflow:hidden}
+    .ac-bar-fill{height:100%;border-radius:2px}
+    .chart-section{background:var(--surface-1);border-radius:12px;border:0.5px solid var(--border);padding:16px;margin-bottom:1.5rem}
+    .chart-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px}
+    .chart-title{font-size:13px;font-weight:500;color:var(--text-primary)}
+    .legend{display:flex;gap:16px;flex-wrap:wrap}
+    .leg{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text-secondary)}
+    .leg-sq{width:10px;height:10px;border-radius:2px;flex-shrink:0}
+    .chart-box{position:relative;width:100%;height:200px}
+    .tbl-wrap{background:var(--surface-1);border-radius:12px;border:0.5px solid var(--border);overflow:hidden}
+    .tbl-header{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:0.5px solid var(--border)}
+    .tbl-title{font-size:13px;font-weight:500;color:var(--text-primary)}
+    .tbl-meta{font-size:12px;color:var(--text-muted)}
+    .tbl-scroll{overflow-x:auto}
+    table{width:100%;border-collapse:collapse;font-size:13px}
+    th{font-size:11px;font-weight:500;color:var(--text-muted);text-align:right;padding:10px 14px;border-bottom:0.5px solid var(--border);white-space:nowrap;background:var(--surface-1)}
+    th:first-child,th:nth-child(2),th:nth-child(3){text-align:left}
+    td{padding:10px 14px;text-align:right;border-bottom:0.5px solid var(--border);color:var(--text-primary);white-space:nowrap;font-variant-numeric:tabular-nums}
+    td:first-child,td:nth-child(2),td:nth-child(3){text-align:left}
+    tr.grp td{background:var(--surface-0,#f5f4f0);font-size:11px;font-weight:500;color:var(--text-secondary);padding:8px 14px;border-bottom:0.5px solid var(--border);text-transform:uppercase;letter-spacing:.04em}
+    tr.sub td{font-weight:500;border-top:0.5px solid var(--border-strong);background:var(--surface-1)}
+    tr.grand td{font-weight:500;background:#E6F1FB;color:#0C447C;border-top:1px solid #85B7EB}
+    tr.data-row:hover td{background:var(--surface-0)}
+    tr:last-child td{border-bottom:none}
+    .pill{display:inline-flex;font-size:10px;font-weight:500;padding:2px 8px;border-radius:20px}
+    .pill-rec{background:#E6F1FB;color:#0C447C}
+    .pill-spend{background:#FAEEDA;color:#633806}
+    .pill-recon{background:#EAF3DE;color:#27500A}
+    .pill-unrecon{background:#FCEBEB;color:#501313}
+    .pos{color:#3b6d11}
+    .neg{color:#791f1f}
+    .muted{color:var(--text-muted)}
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Injected dynamically by common.js -->
+        <header class="top-navbar"></header>
+        
+        <!-- Injected dynamically by common.js -->
+        <nav class="page-nav-bar"></nav>
+        
+        <!-- Dashboard Canvas -->
+        <main class="dashboard-canvas">
+            <h2 class="sr-only">NTT Property Development cash position by bank account showing running balances, monthly inflows and outflows across three accounts with project selector and account filter.</h2>
+            
+            <div class="wrap">
+              <div class="topbar">
+                <div class="titles">
+                  <div class="t1"><i class="ti ti-building-bank" aria-hidden="true"></i>Cash position by account</div>
+                  <div class="t2" id="subTitle">FY 2021–26 · NTT Property Development · All projects · All accounts</div>
+                </div>
+                <span class="badge">Illustrative — for discussion only</span>
+              </div>
+
+              <div class="controls">
+                <div class="ctrl-row">
+                  <span class="ctrl-lbl">Project</span>
+                  <select id="projectSelect" onchange="changeProj(this.value)">
+                    <option value="all">All projects</option>
+                    <option value="P1">Ridgeway Estate</option>
+                    <option value="P2">Bayside Gardens</option>
+                    <option value="P3">North Haven</option>
+                    <option value="P4">Greenfield Park</option>
+                  </select>
+                </div>
+                <div class="ctrl-row">
+                  <span class="ctrl-lbl">Period</span>
+                  <select id="fySelect" onchange="changeFY(this.value)">
+                    <option value="all">All years</option>
+                    <option value="2021">FY21</option>
+                    <option value="2022">FY22</option>
+                    <option value="2023">FY23</option>
+                    <option value="2024">FY24</option>
+                    <option value="2025">FY25</option>
+                    <option value="2026">FY26</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="kpis">
+                <div class="kpi">
+                  <div class="kpi-icon"><i class="ti ti-wallet" aria-hidden="true"></i></div>
+                  <div class="kpi-l">Net cash position</div>
+                  <div class="kpi-v" id="kNet">—</div>
+                  <div class="kpi-sub">across all accounts</div>
+                </div>
+                <div class="kpi">
+                  <div class="kpi-icon"><i class="ti ti-arrow-down-circle" aria-hidden="true"></i></div>
+                  <div class="kpi-l">Total inflows</div>
+                  <div class="kpi-v ok" id="kIn">—</div>
+                  <div class="kpi-sub" id="kInC">— transactions</div>
+                </div>
+                <div class="kpi">
+                  <div class="kpi-icon"><i class="ti ti-arrow-up-circle" aria-hidden="true"></i></div>
+                  <div class="kpi-l">Total outflows</div>
+                  <div class="kpi-v warn" id="kOut">—</div>
+                  <div class="kpi-sub" id="kOutC">— transactions</div>
+                </div>
+                <div class="kpi">
+                  <div class="kpi-icon"><i class="ti ti-checks" aria-hidden="true"></i></div>
+                  <div class="kpi-l">Reconciled</div>
+                  <div class="kpi-v" id="kRecon">—</div>
+                  <div class="kpi-sub" id="kReconC">of transactions</div>
+                </div>
+              </div>
+
+              <div class="acct-cards" id="acctCards"></div>
+
+              <div class="chart-section">
+                <div class="chart-header">
+                  <span class="chart-title">Monthly inflows vs outflows</span>
+                  <div class="legend">
+                    <span class="leg"><span class="leg-sq" style="background:#2a78d6"></span>Inflows (RECEIVE)</span>
+                    <span class="leg"><span class="leg-sq" style="background:#e34948"></span>Outflows (SPEND)</span>
+                  </div>
+                </div>
+                <div class="chart-box"><canvas id="mainChart" role="img" aria-label="Bar chart showing monthly inflows and outflows by bank account">Monthly cash flow data.</canvas></div>
+              </div>
+
+              <div class="tbl-wrap">
+                <div class="tbl-header">
+                  <span class="tbl-title">Transaction detail</span>
+                  <span class="tbl-meta" id="tblMeta">—</span>
+                </div>
+                <div class="tbl-scroll">
+                  <table>
+                    <thead><tr>
+                      <th>Date</th><th>Contact</th><th>Account</th><th>Type</th><th>Inflow</th><th>Outflow</th><th>Net</th><th>Reconciled</th>
+                    </tr></thead>
+                    <tbody id="tbody"></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- CDNs & Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+    <script src="../js/common.js"></script>
+    
+    <script>
+        // Inject shell layout first
+        injectShellLayout('xero_cash');
+    </script>
+    
+    <script>
+    function fmtM(n){if(n==null||n===0)return'—';const a=Math.abs(n);const s=n<0?'-':'';return s+'$'+(a>=1e6?(a/1e6).toFixed(2)+'M':(a>=1e3?(a/1e3).toFixed(0)+'k':a.toFixed(0)));}
+    function rnd(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
+
+    const projs={P1:'Ridgeway Estate',P2:'Bayside Gardens',P3:'North Haven',P4:'Greenfield Park'};
+    const accounts=[
+      {id:'OPA',name:'Operating account',code:'090',netBias:-950000,color:'#e34948'},
+      {id:'TRA',name:'Trust account',code:'091',netBias:440000,color:'#2a78d6'},
+      {id:'CLA',name:'Clearing account',code:'092',netBias:0,color:'#898781',dormant:true},
+    ];
+    const contacts=['Ridgeway Homes Pty Ltd','ABC Civil Contractors','Bayside Developments','Landscape Plus Pty','Beck Legal Services','Greenfield Trust','Hamilton Smith Pty','Ridgeway Utilities','City Agency','PC Complete'];
+    const fyears=[2021,2022,2023,2024,2025,2026];
+    const moLabels=['Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar','Apr','May','Jun'];
+
+    const txns=[];
+    ['P1','P2','P3','P4'].forEach((pid,pi)=>{
+      accounts.forEach((acct,ai)=>{
+        fyears.forEach(fy=>{
+          moLabels.forEach((mo,mi)=>{
+            const calYr=mi<6?fy:fy-1;
+            const cnt=acct.dormant?rnd(0,1):rnd(5,30);
+            for(let i=0;i<cnt;i++){
+              const isReceive=acct.netBias>0?Math.random()>0.35:Math.random()>0.65;
+              const amt=acct.dormant?rnd(1,100):rnd(15,180)*1000;
+              txns.push({
+                pid,acctId:acct.id,acctName:acct.name,acctCode:acct.code,
+                fy,mi,mo,calYr,
+                type:isReceive?'RECEIVE':'SPEND',
+                amount:amt,
+                contact:contacts[(pi*10+ai*3+i)%contacts.length],
+                reconciled:Math.random()>0.15,
+                date:`${String(rnd(1,28)).padStart(2,'0')}/${String(mi<6?mi+7:mi-5).padStart(2,'0')}/${calYr}`
+              });
+            }
+          });
+        });
+      });
+    });
+
+    let curProj='all',curFY='all',chartInst=null;
+
+    function filtered(){
+      return txns.filter(t=>
+        (curProj==='all'||t.pid===curProj)&&
+        (curFY==='all'||t.fy===curFY)
+      );
+    }
+
+    function renderAcctCards(rows){
+      const container=document.getElementById('acctCards');
+      container.innerHTML='';
+      accounts.forEach(acct=>{
+        const aRows=rows.filter(r=>r.acctId===acct.id);
+        const inflow=aRows.filter(r=>r.type==='RECEIVE').reduce((a,r)=>a+r.amount,0);
+        const outflow=aRows.filter(r=>r.type==='SPEND').reduce((a,r)=>a+r.amount,0);
+        const net=inflow-outflow;
+        const maxFlow=Math.max(inflow,outflow);
+        const fillPct=maxFlow>0?Math.round(Math.min(inflow,outflow)/maxFlow*100):0;
+        const card=document.createElement('div');
+        card.className='acct-card'+(acct.dormant?' dormant':'');
+        card.innerHTML=`
+          <div class="ac-top">
+            <div>
+              <div class="ac-name"><i class="ti ti-credit-card" style="font-size:13px;vertical-align:-1px;margin-right:5px" aria-hidden="true"></i>${acct.name}</div>
+              <div class="ac-code">Account ${acct.code}${acct.dormant?' · Dormant':''}</div>
+            </div>
+          </div>
+          <div class="ac-val ${net>0?'pos':net<0?'neg':'zero'}">${fmtM(net)}</div>
+          <div class="ac-sub">↓ ${fmtM(inflow)} in &nbsp;·&nbsp; ↑ ${fmtM(outflow)} out</div>
+          <div class="ac-bar"><div class="ac-bar-fill" style="width:${fillPct}%;background:${acct.color}"></div></div>`;
+        container.appendChild(card);
+      });
+    }
+
+    function renderChart(rows){
+      if(chartInst)chartInst.destroy();
+      const grouped={};
+      rows.forEach(r=>{
+        const k=`${r.fy}-${String(r.mi).padStart(2,'0')}`;
+        if(!grouped[k])grouped[k]={fy:r.fy,mi:r.mi,mo:r.mo,calYr:r.calYr,in:0,out:0};
+        if(r.type==='RECEIVE')grouped[k].in+=r.amount;
+        else grouped[k].out+=r.amount;
+      });
+      const keys=Object.keys(grouped).sort();
+      const gRows=keys.map(k=>grouped[k]);
+      const labels=gRows.map(r=>`${r.mo} ${r.calYr}`);
+      chartInst=new Chart(document.getElementById('mainChart'),{
+        type:'bar',
+        data:{
+          labels,
+          datasets:[
+            {label:'Inflows',data:gRows.map(r=>r.in),backgroundColor:'#2a78d6',borderRadius:2,borderSkipped:false},
+            {label:'Outflows',data:gRows.map(r=>-r.out),backgroundColor:'#e34948',borderRadius:2,borderSkipped:false},
+          ]
+        },
+        options:{
+          responsive:true,maintainAspectRatio:false,
+          plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`${c.dataset.label}: $${Math.abs(Math.round(c.raw)).toLocaleString()}`}}},
+          scales:{
+            x:{grid:{display:false},ticks:{font:{size:10},color:'#898781',maxTicksLimit:18,maxRotation:45}},
+            y:{grid:{color:'#e1e0d9',lineWidth:0.5},ticks:{font:{size:11},color:'#898781',callback:v=>{const a=Math.abs(v);return(v<0?'-':'')+'$'+(a>=1e6?(a/1e6).toFixed(1)+'M':(a/1e3).toFixed(0)+'k');}}}
+          }
+        }
+      });
+    }
+
+    function renderTable(rows){
+      const body=document.getElementById('tbody');body.innerHTML='';
+      const fyList=curFY==='all'?fyears:[curFY];
+      let totalIn=0,totalOut=0,totalCnt=0;
+      fyList.forEach(fy=>{
+        const fyRows=rows.filter(r=>r.fy===fy);
+        if(!fyRows.length)return;
+        const fyIn=fyRows.filter(r=>r.type==='RECEIVE').reduce((a,r)=>a+r.amount,0);
+        const fyOut=fyRows.filter(r=>r.type==='SPEND').reduce((a,r)=>a+r.amount,0);
+        totalIn+=fyIn;totalOut+=fyOut;totalCnt+=fyRows.length;
+        const gh=document.createElement('tr');gh.className='grp';
+        gh.innerHTML=`<td colspan="8">FY ${fy} &nbsp;·&nbsp; ${fyRows.length} transactions &nbsp;·&nbsp; net ${fmtM(fyIn-fyOut)}</td>`;
+        body.appendChild(gh);
+        [...fyRows].sort((a,b)=>b.fy-a.fy||b.mi-a.mi).slice(0,20).forEach(r=>{
+          const tr=document.createElement('tr');tr.className='data-row';
+          tr.innerHTML=`
+            <td style="font-weight:500;font-size:12px">${r.date}</td>
+            <td style="color:var(--text-secondary);max-width:130px;overflow:hidden;text-overflow:ellipsis" title="${r.contact}">${r.contact}</td>
+            <td style="color:var(--text-muted);font-size:12px">${r.acctName}</td>
+            <td><span class="pill ${r.type==='RECEIVE'?'pill-rec':'pill-spend'}">${r.type}</span></td>
+            <td class="pos">${r.type==='RECEIVE'?fmtM(r.amount):'—'}</td>
+            <td class="neg">${r.type==='SPEND'?fmtM(r.amount):'—'}</td>
+            <td class="${r.type==='RECEIVE'?'pos':'neg'}">${r.type==='RECEIVE'?fmtM(r.amount):fmtM(-r.amount)}</td>
+            <td><span class="pill ${r.reconciled?'pill-recon':'pill-unrecon'}">${r.reconciled?'Reconciled':'Unreconciled'}</span></td>`;
+          body.appendChild(tr);
+        });
+        const sr=document.createElement('tr');sr.className='sub';
+        sr.innerHTML=`<td colspan="3" style="text-align:left;color:var(--text-secondary)">FY ${fy} total</td><td></td><td class="pos">${fmtM(fyIn)}</td><td class="neg">${fmtM(fyOut)}</td><td class="${(fyIn-fyOut)>=0?'pos':'neg'}">${fmtM(fyIn-fyOut)}</td><td></td>`;
+        body.appendChild(sr);
+      });
+      const gr=document.createElement('tr');gr.className='grand';
+      gr.innerHTML=`<td colspan="3">Total</td><td></td><td>${fmtM(totalIn)}</td><td>${fmtM(totalOut)}</td><td class="${(totalIn-totalOut)>=0?'pos':'neg'}">${fmtM(totalIn-totalOut)}</td><td></td>`;
+      body.appendChild(gr);
+      document.getElementById('tblMeta').textContent=`${totalCnt} transactions`;
+    }
+
+    function render(){
+      const rows=filtered();
+      const inflows=rows.filter(r=>r.type==='RECEIVE');
+      const outflows=rows.filter(r=>r.type==='SPEND');
+      const totIn=inflows.reduce((a,r)=>a+r.amount,0);
+      const totOut=outflows.reduce((a,r)=>a+r.amount,0);
+      const net=totIn-totOut;
+      const reconCnt=rows.filter(r=>r.reconciled).length;
+      const reconPct=rows.length>0?Math.round(reconCnt/rows.length*100):0;
+
+      const netEl=document.getElementById('kNet');
+      netEl.textContent=fmtM(net);
+      netEl.className='kpi-v '+(net>=0?'ok':'neg');
+      document.getElementById('kIn').textContent=fmtM(totIn);
+      document.getElementById('kInC').textContent=`${inflows.length} transactions`;
+      document.getElementById('kOut').textContent=fmtM(totOut);
+      document.getElementById('kOutC').textContent=`${outflows.length} transactions`;
+      document.getElementById('kRecon').textContent=`${reconPct}%`;
+      document.getElementById('kReconC').textContent=`${reconCnt} of ${rows.length}`;
+
+      const pName=curProj==='all'?'All projects':projs[curProj];
+      const fyName=curFY==='all'?'FY 2021–26':`FY ${curFY}`;
+      document.getElementById('subTitle').textContent=`${fyName} · NTT Property Development · ${pName}`;
+
+      renderAcctCards(rows);
+      renderChart(rows);
+      renderTable(rows);
+    }
+
+    function changeProj(val){curProj=val;render();}
+    function changeFY(val){curFY=val==='all'?'all':parseInt(val);render();}
+
+    render();
+    </script>
+</body>
+</html>

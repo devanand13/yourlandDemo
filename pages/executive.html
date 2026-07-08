@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Executive Summary - YourLand Dashboard</title>
+    
+    <!-- CDNs -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
+    
+    <!-- CSS styles -->
+    <link href="../css/style.css" rel="stylesheet">
+    <link href="../css/components.css" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Injected dynamically by common.js -->
+        <header class="top-navbar"></header>
+        
+        <!-- Injected dynamically by common.js -->
+        <nav class="page-nav-bar"></nav>
+        
+        <!-- Dashboard Canvas -->
+        <main class="dashboard-canvas">
+            
+            <!-- Row 1: KPI Cards -->
+            <div class="row g-3 mb-4">
+                <!-- KPI 1: Development Margin -->
+                <div class="col-6 col-md-4 col-lg-2">
+                    <div class="kpi-card">
+                        <div class="kpi-header">
+                            <span class="kpi-label">Dev Margin</span>
+                            <i class="fa-solid fa-percent kpi-icon"></i>
+                        </div>
+                        <h2 id="kpi-margin" class="kpi-value">--</h2>
+                        <div class="kpi-footer">
+                            <span class="kpi-subtext">Profit/Revenue</span>
+                            <span id="badge-margin" class="kpi-status-badge">Target: 20%</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- KPI 2: Development Profit -->
+                <div class="col-6 col-md-4 col-lg-2">
+                    <div class="kpi-card">
+                        <div class="kpi-header">
+                            <span class="kpi-label">Dev Profit</span>
+                            <i class="fa-solid fa-hand-holding-dollar kpi-icon"></i>
+                        </div>
+                        <h2 id="kpi-profit" class="kpi-value">--</h2>
+                        <div class="kpi-footer">
+                            <span class="kpi-subtext">Total Net</span>
+                            <span id="badge-profit" class="kpi-status-badge">Net Value</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- KPI 3: Project IRR -->
+                <div class="col-6 col-md-4 col-lg-2">
+                    <div class="kpi-card">
+                        <div class="kpi-header">
+                            <span class="kpi-label">Project IRR</span>
+                            <i class="fa-solid fa-chart-line kpi-icon"></i>
+                        </div>
+                        <h2 id="kpi-project-irr" class="kpi-value">--</h2>
+                        <div class="kpi-footer">
+                            <span class="kpi-subtext">Annualized</span>
+                            <span id="badge-project-irr" class="kpi-status-badge">Lifetime</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- KPI 4: Equity IRR -->
+                <div class="col-6 col-md-4 col-lg-2">
+                    <div class="kpi-card">
+                        <div class="kpi-header">
+                            <span class="kpi-label">Equity IRR</span>
+                            <i class="fa-solid fa-coins kpi-icon"></i>
+                        </div>
+                        <h2 id="kpi-equity-irr" class="kpi-value">--</h2>
+                        <div class="kpi-footer">
+                            <span class="kpi-subtext">Annualized</span>
+                            <span id="badge-equity-irr" class="kpi-status-badge">Leveraged</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- KPI 5: Peak Equity -->
+                <div class="col-6 col-md-4 col-lg-2">
+                    <div class="kpi-card">
+                        <div class="kpi-header">
+                            <span class="kpi-label">Peak Equity</span>
+                            <i class="fa-solid fa-landmark kpi-icon"></i>
+                        </div>
+                        <h2 id="kpi-peak-equity" class="kpi-value">--</h2>
+                        <div class="kpi-footer">
+                            <span class="kpi-subtext">Max Exposure</span>
+                            <span id="badge-peak-equity" class="kpi-status-badge">Peak Loan</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- KPI 6: NPV -->
+                <div class="col-6 col-md-4 col-lg-2">
+                    <div class="kpi-card">
+                        <div class="kpi-header">
+                            <span class="kpi-label">NPV</span>
+                            <i class="fa-solid fa-arrow-trend-up kpi-icon"></i>
+                        </div>
+                        <h2 id="kpi-npv" class="kpi-value">--</h2>
+                        <div class="kpi-footer">
+                            <span class="kpi-subtext">Discounted @10%</span>
+                            <span id="badge-npv" class="kpi-status-badge">Net Pres Value</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Row 2: Budget Comparison & Variance Matrix -->
+            <div class="row g-3 mb-4">
+                <!-- Left: Budget Comparison Chart -->
+                <div class="col-12 col-lg-6">
+                    <div class="card-master">
+                        <div class="card-title-bar">
+                            <h3>Budget Versions Comparison <span class="card-subtitle">Revenue & Cost comparison across all 4 budgets</span></h3>
+                            <i class="fa-solid fa-scale-balanced text-muted"></i>
+                        </div>
+                        <div class="chart-container-wrapper" style="height: 250px;">
+                            <canvas id="budgetComparisonChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Budget Variance Matrix -->
+                <div class="col-12 col-lg-6">
+                    <div class="card-master">
+                        <div class="card-title-bar">
+                            <h3>Budget Variance Matrix <span class="card-subtitle">Current Budget performance vs other versions</span></h3>
+                            <i class="fa-solid fa-matrix text-muted"></i>
+                        </div>
+                        <div class="yl-table-container">
+                            <table class="table-yl" id="varianceMatrixTable" style="font-size: 0.78rem;">
+                                <thead>
+                                    <tr>
+                                        <th>Metric Name</th>
+                                        <th class="text-end">Current Budget</th>
+                                        <th class="text-end">vs Original</th>
+                                        <th class="text-end">vs Project</th>
+                                        <th class="text-end">vs Previous</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="varianceTableBody">
+                                    <tr>
+                                        <td colspan="5" class="text-center text-muted py-5">
+                                            <i class="fa-solid fa-spinner fa-spin fs-5 mb-2"></i>
+                                            <p class="mb-0">Loading matrix...</p>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Row 3: Large Revenue vs Cost & Active Stages -->
+            <div class="row g-3 mb-4">
+                <!-- Stacked Column Chart -->
+                <div class="col-12 col-lg-8">
+                    <div class="card-master">
+                        <div class="card-title-bar">
+                            <h3>Revenue vs Total Cost <span id="revenue-cost-chart-sub" class="card-subtitle">Yearly Stacked breakdown</span></h3>
+                            <i class="fa-solid fa-chart-column text-muted"></i>
+                        </div>
+                        <div class="chart-container-wrapper" style="height: 320px;">
+                            <canvas id="revenueCostStackedChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Active Stages Panel -->
+                <div class="col-12 col-lg-4">
+                    <div class="card-master">
+                        <div class="card-title-bar">
+                            <h3>Current Active Stages <span class="card-subtitle">Active phases in stages.json</span></h3>
+                            <i class="fa-solid fa-circle-play text-muted"></i>
+                        </div>
+                        <div class="stages-list-container overflow-y-auto" style="max-height: 320px; flex: 1;">
+                            <div id="activeStagesList" class="stages-list">
+                                <!-- Populated dynamically by executive.js -->
+                                <div class="text-center text-muted py-5">
+                                    <i class="fa-solid fa-spinner fa-spin fs-4 mb-2"></i>
+                                    <p class="mb-0">Loading stages...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Row 3: Composition Donuts -->
+            <div class="row g-3">
+                <!-- Donut 1: Revenue Composition -->
+                <div class="col-12 col-md-6">
+                    <div class="card-master">
+                        <div class="card-title-bar">
+                            <h3>Revenue Composition <span class="card-subtitle">Source breakdown</span></h3>
+                            <i class="fa-solid fa-pie-chart text-muted"></i>
+                        </div>
+                        <div class="chart-container-wrapper" style="height: 250px;">
+                            <canvas id="revenueCompositionChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Donut 2: Cost Composition -->
+                <div class="col-12 col-md-6">
+                    <div class="card-master">
+                        <div class="card-title-bar">
+                            <h3>Cost Composition <span class="card-subtitle">Expense category breakdown</span></h3>
+                            <i class="fa-solid fa-pie-chart text-muted"></i>
+                        </div>
+                        <div class="chart-container-wrapper" style="height: 250px;">
+                            <canvas id="costCompositionChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+        </main>
+    </div>
+
+    <!-- JS Core Libraries (Bootstrap, Chart.js) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+    <!-- Custom Modules -->
+    <script src="../js/data_loader.js?v=2"></script>
+    <script src="../js/state.js?v=2"></script>
+    <script src="../js/common.js?v=2"></script>
+    <script src="../js/filters.js?v=2"></script>
+    <script src="../js/charts.js?v=2"></script>
+    <script src="../js/executive.js?v=2"></script>
+</body>
+</html>

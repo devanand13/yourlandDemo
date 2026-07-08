@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lot-level Revenue - YourLand Dashboard</title>
+    
+    <!-- CDNs -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.36.0/tabler-icons.min.css" rel="stylesheet">
+    
+    <!-- CSS styles -->
+    <link href="../css/style.css" rel="stylesheet">
+    <link href="../css/components.css" rel="stylesheet">
+    
+    <style>
+    .wrap{padding:0.5rem 0;font-family:var(--font-sans)}
+    .topbar{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1.5rem;gap:12px;border-bottom:0.5px solid var(--border);padding-bottom:1.25rem}
+    .titles .t1{font-size:18px;font-weight:500;color:var(--text-primary);display:flex;align-items:center;gap:8px}
+    .titles .t2{font-size:13px;color:var(--text-muted);margin-top:4px}
+    .badge{font-size:11px;color:var(--text-muted);border:0.5px solid var(--border);border-radius:20px;padding:4px 12px;white-space:nowrap;flex-shrink:0}
+    .controls{display:flex;flex-direction:column;gap:8px;margin-bottom:1.5rem}
+    .ctrl-row{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+    .ctrl-lbl{font-size:11px;font-weight:500;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;width:52px;flex-shrink:0}
+    .fb{font-size:12px;font-weight:500;padding:4px 12px;border-radius:20px;border:0.5px solid var(--border-strong);background:transparent;color:var(--text-secondary);cursor:pointer;transition:all .12s}
+    .fb:hover{background:var(--surface-1)}
+    .fb.on{background:#FFE7CC;color:#7A5A28;border-color:#FF8600}
+    select{font-size:12px;font-family:var(--font-sans);padding:4px 28px 4px 10px;border-radius:20px;border:0.5px solid var(--border-strong);background:var(--surface-1);color:var(--text-primary);cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23898781' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center}
+    .kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:1.5rem}
+    .kpi{background:var(--surface-1);border-radius:12px;padding:14px 16px;border:0.5px solid var(--border)}
+    .kpi-icon{font-size:18px;color:var(--text-muted);margin-bottom:8px}
+    .kpi-l{font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px}
+    .kpi-v{font-size:22px;font-weight:500;font-variant-numeric:tabular-nums;color:var(--text-primary)}
+    .kpi-v.ok{color:#3b6d11}
+    .kpi-v.warn{color:#854f0b}
+    .kpi-sub{font-size:11px;color:var(--text-muted);margin-top:3px}
+    .chart-section{background:var(--surface-1);border-radius:12px;border:0.5px solid var(--border);padding:16px;margin-bottom:1.5rem}
+    .chart-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+    .chart-title{font-size:13px;font-weight:500;color:var(--text-primary)}
+    .legend{display:flex;gap:16px;flex-wrap:wrap}
+    .leg{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text-secondary)}
+    .leg-sq{width:10px;height:10px;border-radius:2px;flex-shrink:0}
+    .chart-box{position:relative;width:100%;height:180px}
+    .tbl-wrap{background:var(--surface-1);border-radius:12px;border:0.5px solid var(--border);overflow:hidden}
+    .tbl-header{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:0.5px solid var(--border)}
+    .tbl-title{font-size:13px;font-weight:500;color:var(--text-primary)}
+    .tbl-meta{font-size:12px;color:var(--text-muted)}
+    .tbl-scroll{overflow-x:auto}
+    table{width:100%;border-collapse:collapse;font-size:13px}
+    th{font-size:11px;font-weight:500;color:var(--text-muted);text-align:right;padding:10px 14px;border-bottom:0.5px solid var(--border);white-space:nowrap;background:var(--surface-1)}
+    th:first-child,th:nth-child(2),th:nth-child(3){text-align:left}
+    td{padding:10px 14px;text-align:right;border-bottom:0.5px solid var(--border);color:var(--text-primary);white-space:nowrap;font-variant-numeric:tabular-nums}
+    td:first-child,td:nth-child(2),td:nth-child(3){text-align:left}
+    tr:last-child td{border-bottom:none}
+    tr.grp td{background:var(--surface-0,#f5f4f0);font-size:11px;font-weight:500;color:var(--text-secondary);padding:8px 14px;border-bottom:0.5px solid var(--border);text-transform:uppercase;letter-spacing:.04em}
+    tr.sub td{font-weight:500;border-top:0.5px solid var(--border-strong);background:var(--surface-1)}
+    tr.grand td{font-weight:500;background:#E6F1FB;color:#0C447C;border-top:1px solid #85B7EB}
+    tr.data-row:hover td{background:var(--surface-0)}
+    .lot-badge{display:inline-flex;align-items:center;font-size:11px;font-weight:500;padding:2px 8px;border-radius:4px;background:#E6F1FB;color:#0C447C}
+    .pill{display:inline-flex;font-size:10px;font-weight:500;padding:2px 8px;border-radius:20px}
+    .pill-paid{background:#EAF3DE;color:#27500A}
+    .pill-pend{background:#FAEEDA;color:#633806}
+    .contact-cell{overflow:hidden;text-overflow:ellipsis;max-width:150px;color:var(--text-secondary)}
+    .prog{display:flex;align-items:center;gap:6px;justify-content:flex-end}
+    .prog-bar{width:48px;height:4px;border-radius:2px;background:var(--border);overflow:hidden;flex-shrink:0}
+    .prog-fill{height:100%;border-radius:2px}
+    .prog-fill.hi{background:#1D9E75}
+    .prog-fill.lo{background:#EF9F27}
+    .prog-pct{font-size:11px;color:var(--text-muted);min-width:28px;text-align:right}
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Injected dynamically by common.js -->
+        <header class="top-navbar"></header>
+        
+        <!-- Injected dynamically by common.js -->
+        <nav class="page-nav-bar"></nav>
+        
+        <!-- Dashboard Canvas -->
+        <main class="dashboard-canvas">
+            <h2 class="sr-only">NTT Property Development lot-level revenue report showing settled and outstanding amounts per lot across Stage 1 to 4, with project and stage filters, KPI summary cards, a stacked bar chart and a detailed lot table with settlement progress.</h2>
+            
+            <div class="wrap">
+              <div class="topbar">
+                <div class="titles">
+                  <div class="t1"><i class="ti ti-home-2" aria-hidden="true"></i>Lot-level revenue</div>
+                  <div class="t2" id="subTitle">FY 2025–26 &nbsp;·&nbsp; NTT Property Development &nbsp;·&nbsp; All projects &nbsp;·&nbsp; All stages</div>
+                </div>
+                <span class="badge">Illustrative — for discussion only</span>
+              </div>
+
+              <div class="controls">
+                <div class="ctrl-row">
+                  <span class="ctrl-lbl">Project</span>
+                  <select id="projectSelect" onchange="changeProj(this.value)">
+                    <option value="all">All projects</option>
+                    <option value="P1">Ridgeway Estate</option>
+                    <option value="P2">Bayside Gardens</option>
+                    <option value="P3">North Haven</option>
+                    <option value="P4">Greenfield Park</option>
+                  </select>
+                </div>
+                <div class="ctrl-row">
+                  <span class="ctrl-lbl">Stage</span>
+                  <select id="stageSelect" onchange="changeStage(this.value)">
+                    <option value="all">All stages</option>
+                    <option value="Stage 1">Stage 1</option>
+                    <option value="Stage 2">Stage 2</option>
+                    <option value="Stage 3">Stage 3</option>
+                    <option value="Stage 4">Stage 4</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="kpis">
+                <div class="kpi">
+                  <div class="kpi-icon"><i class="ti ti-file-dollar" aria-hidden="true"></i></div>
+                  <div class="kpi-l">Total invoiced</div>
+                  <div class="kpi-v" id="kTot">—</div>
+                  <div class="kpi-sub" id="kLots">— lots</div>
+                </div>
+                <div class="kpi">
+                  <div class="kpi-icon"><i class="ti ti-circle-check" aria-hidden="true"></i></div>
+                  <div class="kpi-l">Settled</div>
+                  <div class="kpi-v ok" id="kPaid">—</div>
+                  <div class="kpi-sub" id="kPaidLots">— lots settled</div>
+                </div>
+                <div class="kpi">
+                  <div class="kpi-icon"><i class="ti ti-clock" aria-hidden="true"></i></div>
+                  <div class="kpi-l">Outstanding</div>
+                  <div class="kpi-v warn" id="kDue">—</div>
+                  <div class="kpi-sub" id="kDueLots">— lots pending</div>
+                </div>
+                <div class="kpi">
+                  <div class="kpi-icon"><i class="ti ti-percent" aria-hidden="true"></i></div>
+                  <div class="kpi-l">Settlement rate</div>
+                  <div class="kpi-v" id="kRate">—</div>
+                  <div class="kpi-sub">by value</div>
+                </div>
+              </div>
+
+              <div class="chart-section">
+                <div class="chart-header">
+                  <span class="chart-title">Revenue by stage — settled vs outstanding</span>
+                  <div class="legend">
+                    <span class="leg"><span class="leg-sq" style="background:#1D9E75"></span>Settled</span>
+                    <span class="leg"><span class="leg-sq" style="background:#EF9F27"></span>Outstanding</span>
+                  </div>
+                </div>
+                <div class="chart-box"><canvas id="stageChart" role="img" aria-label="Stacked bar chart showing settled and outstanding revenue per stage">Stage revenue data.</canvas></div>
+              </div>
+
+              <div class="tbl-wrap">
+                <div class="tbl-header">
+                  <span class="tbl-title">Lot breakdown</span>
+                  <span class="tbl-meta" id="tblMeta">— lots</span>
+                </div>
+                <div class="tbl-scroll">
+                  <table>
+                    <thead><tr>
+                      <th>Lot</th><th>Contact</th><th>Stage</th><th>Invoiced</th><th>Settled</th><th>Outstanding</th><th>Status</th><th>Settlement</th>
+                    </tr></thead>
+                    <tbody id="tbody"></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- CDNs & Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+    <script src="../js/common.js"></script>
+    
+    <script>
+        injectShellLayout('xero_lot');
+    </script>
+    
+    <script>
+    function fmtM(n){if(n==null||n===0)return'—';const a=Math.abs(n);return(n<0?'-':'')+'$'+(a>=1e6?(a/1e6).toFixed(2)+'M':(a/1e3).toFixed(1)+'k');}
+    function rnd(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
+
+    const projs={P1:'Ridgeway Estate',P2:'Bayside Gardens',P3:'North Haven',P4:'Greenfield Park'};
+    const stages=['Stage 1','Stage 2','Stage 3','Stage 4'];
+    const contacts=['Ridgeway Homes Pty Ltd','Bayside Developments','Greenfield Trust','Hamilton Smith Pty','City Agency','Maddox Group','Brunswick Holdings','Southside Property Trust','North Estate Pty Ltd','Victoria Land Co','Park Avenue Dev','Harbour View Pty','Eastside Homes','Westfield Estates','Bayview Holdings','Summit Property Group','Lakeside Dev','Riverside Pty Ltd','Metro Holdings','Coast Developments'];
+    const ranges={'Stage 1':{min:320,max:580},'Stage 2':{min:280,max:520},'Stage 3':{min:350,max:620},'Stage 4':{min:290,max:540}};
+
+    const lots=[];
+    let ln=200;
+    ['P1','P2','P3','P4'].forEach((pid,pi)=>{
+      stages.forEach((stage,si)=>{
+        const count=rnd(14,20);
+        for(let i=0;i<count;i++){
+          ln++;
+          const r=ranges[stage];
+          const total=rnd(r.min,r.max)*1000;
+          const paid=Math.random()>0.08?total:Math.floor(total*rnd(0,40)/100);
+          lots.push({pid,stage,lot:`Lot ${ln}`,contact:contacts[(pi*24+si*5+i)%contacts.length],total,paid,due:total-paid,settled:paid===total});
+        }
+      });
+    });
+
+    let curProj='all',curStage='all',chartInst=null;
+
+    function filtered(){return lots.filter(l=>(curProj==='all'||l.pid===curProj)&&(curStage==='all'||l.stage===curStage));}
+
+    function render(){
+      const rows=filtered();
+      const tot=rows.reduce((a,r)=>a+r.total,0);
+      const paid=rows.reduce((a,r)=>a+r.paid,0);
+      const due=rows.reduce((a,r)=>a+r.due,0);
+      const settledLots=rows.filter(r=>r.settled).length;
+      const pendingLots=rows.filter(r=>!r.settled).length;
+      const rate=tot>0?Math.round(paid/tot*100):0;
+
+      document.getElementById('kTot').textContent=fmtM(tot);
+      document.getElementById('kLots').textContent=`${rows.length} lots`;
+      document.getElementById('kPaid').textContent=fmtM(paid);
+      document.getElementById('kPaidLots').textContent=`${settledLots} lots settled`;
+      document.getElementById('kDue').textContent=fmtM(due);
+      document.getElementById('kDueLots').textContent=`${pendingLots} lots pending`;
+      document.getElementById('kRate').textContent=`${rate}%`;
+      document.getElementById('tblMeta').textContent=`${rows.length} lots`;
+
+      const pName=curProj==='all'?'All projects':projs[curProj];
+      const sName=curStage==='all'?'All stages':curStage;
+      document.getElementById('subTitle').textContent=`FY 2025–26 · NTT Property Development · ${pName} · ${sName}`;
+
+      if(chartInst)chartInst.destroy();
+      const visStages=curStage==='all'?stages:[curStage];
+      chartInst=new Chart(document.getElementById('stageChart'),{
+        type:'bar',
+        data:{
+          labels:visStages,
+          datasets:[
+            {label:'Settled',data:visStages.map(s=>rows.filter(r=>r.stage===s).reduce((a,r)=>a+r.paid,0)),backgroundColor:'#1D9E75',borderRadius:4,borderSkipped:false},
+            {label:'Outstanding',data:visStages.map(s=>rows.filter(r=>r.stage===s).reduce((a,r)=>a+r.due,0)),backgroundColor:'#EF9F27',borderRadius:4,borderSkipped:false},
+          ]
+        },
+        options:{
+          responsive:true,maintainAspectRatio:false,
+          plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.dataset.label+': '+fmtM(c.raw)}}},
+          scales:{
+            x:{stacked:true,grid:{display:false},ticks:{font:{size:11},color:'#898781'}},
+            y:{stacked:true,grid:{color:'#e1e0d9',lineWidth:0.5},ticks:{font:{size:11},color:'#898781',callback:v=>'$'+(v/1e6).toFixed(1)+'M'}}
+          }
+        }
+      });
+
+      const body=document.getElementById('tbody');body.innerHTML='';
+      const visS=curStage==='all'?stages:[curStage];
+      visS.forEach(stage=>{
+        const sRows=rows.filter(r=>r.stage===stage);
+        if(!sRows.length)return;
+        const sT=sRows.reduce((a,r)=>a+r.total,0);
+        const sP=sRows.reduce((a,r)=>a+r.paid,0);
+        const sD=sRows.reduce((a,r)=>a+r.due,0);
+        const gh=document.createElement('tr');gh.className='grp';
+        gh.innerHTML=`<td colspan="8">${stage} &nbsp;·&nbsp; ${sRows.length} lots &nbsp;·&nbsp; ${fmtM(sT)} invoiced &nbsp;·&nbsp; ${Math.round(sP/sT*100)}% settled</td>`;
+        body.appendChild(gh);
+        [...sRows].sort((a,b)=>b.total-a.total).forEach(r=>{
+          const p=r.total>0?Math.round(r.paid/r.total*100):0;
+          const tr=document.createElement('tr');tr.className='data-row';
+          tr.innerHTML=`
+            <td><span class="lot-badge">${r.lot}</span></td>
+            <td><div class="contact-cell" title="${r.contact}">${r.contact}</div></td>
+            <td style="color:var(--text-muted);font-size:12px">${r.stage}</td>
+            <td>${fmtM(r.total)}</td>
+            <td style="color:#3b6d11">${fmtM(r.paid)}</td>
+            <td style="color:${r.due>0?'#854f0b':'var(--text-muted)'}">${r.due>0?fmtM(r.due):'—'}</td>
+            <td><span class="pill ${r.settled?'pill-paid':'pill-pend'}">${r.settled?'Settled':'Pending'}</span></td>
+            <td><div class="prog"><span class="prog-pct">${p}%</span><div class="prog-bar"><div class="prog-fill ${p>=50?'hi':'lo'}" style="width:${p}%"></div></div></div></td>`;
+          body.appendChild(tr);
+        });
+        const sr=document.createElement('tr');sr.className='sub';
+        const sp=Math.round(sP/sT*100);
+        sr.innerHTML=`<td colspan="3" style="text-align:left;color:var(--text-secondary)">Stage total</td><td>${fmtM(sT)}</td><td style="color:#3b6d11">${fmtM(sP)}</td><td style="color:${sD>0?'#854f0b':'var(--text-muted)'}">${sD>0?fmtM(sD):'—'}</td><td></td><td><div class="prog"><span class="prog-pct">${sp}%</span><div class="prog-bar"><div class="prog-fill hi" style="width:${sp}%"></div></div></div></td>`;
+        body.appendChild(sr);
+      });
+      const gT=rows.reduce((a,r)=>a+r.total,0);
+      const gP=rows.reduce((a,r)=>a+r.paid,0);
+      const gD=rows.reduce((a,r)=>a+r.due,0);
+      const gp=Math.round(gP/gT*100);
+      const gr=document.createElement('tr');gr.className='grand';
+      gr.innerHTML=`<td colspan="3">Total</td><td>${fmtM(gT)}</td><td>${fmtM(gP)}</td><td>${gD>0?fmtM(gD):'—'}</td><td></td><td><div class="prog"><span class="prog-pct">${gp}%</span><div class="prog-bar"><div class="prog-fill hi" style="width:${gp}%;background:#0C447C"></div></div></div></td>`;
+      body.appendChild(gr);
+    }
+
+    function changeProj(val){curProj=val;render();}
+    function changeStage(val){curStage=val;render();}
+
+    render();
+    </script>
+</body>
+</html>

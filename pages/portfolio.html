@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio Comparison - YourLand Dashboard</title>
+    
+    <!-- CDNs -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
+    
+    <!-- CSS styles -->
+    <link href="../css/style.css" rel="stylesheet">
+    <link href="../css/components.css" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Injected dynamically by common.js -->
+        <header class="top-navbar"></header>
+        
+        <!-- Injected dynamically by common.js -->
+        <nav class="page-nav-bar"></nav>
+        
+        <!-- Dashboard Canvas -->
+        <main class="dashboard-canvas">
+            
+            <!-- Row 1: Revenue by Project -->
+            <div class="row g-3 mb-4">
+                <div class="col-12">
+                    <div class="card-master">
+                        <div class="card-title-bar">
+                            <h3>Revenue by Project <span class="card-subtitle">Total gross revenues ($)</span></h3>
+                            <div class="d-flex align-items-center">
+                                <div class="chart-sort-controls" data-chart="revenueByProjectChart">
+                                    <button class="chart-sort-btn active" data-sort="default" title="Default Order"><i class="fa-solid fa-arrow-down-a-z"></i></button>
+                                    <button class="chart-sort-btn" data-sort="asc" title="Sort Ascending"><i class="fa-solid fa-arrow-up-wide-short"></i></button>
+                                    <button class="chart-sort-btn" data-sort="desc" title="Sort Descending"><i class="fa-solid fa-arrow-down-wide-short"></i></button>
+                                </div>
+                                <i class="fa-solid fa-money-bill-trend-up text-muted"></i>
+                            </div>
+                        </div>
+                        <div class="chart-container-wrapper" style="height: 250px;">
+                            <canvas id="revenueByProjectChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Row 2: Margin & IRR -->
+            <div class="row g-3 mb-4">
+                <!-- Development Margin by Project -->
+                <div class="col-12 col-lg-6">
+                    <div class="card-master">
+                        <div class="card-title-bar">
+                            <h3>Development Margin by Project <span class="card-subtitle">Comparing margins in selected budget</span></h3>
+                            <div class="d-flex align-items-center">
+                                <div class="chart-sort-controls" data-chart="marginByProjectChart">
+                                    <button class="chart-sort-btn active" data-sort="default" title="Default Order"><i class="fa-solid fa-arrow-down-a-z"></i></button>
+                                    <button class="chart-sort-btn" data-sort="asc" title="Sort Ascending"><i class="fa-solid fa-arrow-up-wide-short"></i></button>
+                                    <button class="chart-sort-btn" data-sort="desc" title="Sort Descending"><i class="fa-solid fa-arrow-down-wide-short"></i></button>
+                                </div>
+                                <i class="fa-solid fa-percent text-muted"></i>
+                            </div>
+                        </div>
+                        <div class="chart-container-wrapper" style="height: 250px;">
+                            <canvas id="marginByProjectChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project IRR by Project -->
+                <div class="col-12 col-lg-6">
+                    <div class="card-master">
+                        <div class="card-title-bar">
+                            <h3>Project IRR by Project <span class="card-subtitle">Lifetime annualized returns</span></h3>
+                            <div class="d-flex align-items-center">
+                                <div class="chart-sort-controls" data-chart="irrByProjectChart">
+                                    <button class="chart-sort-btn active" data-sort="default" title="Default Order"><i class="fa-solid fa-arrow-down-a-z"></i></button>
+                                    <button class="chart-sort-btn" data-sort="asc" title="Sort Ascending"><i class="fa-solid fa-arrow-up-wide-short"></i></button>
+                                    <button class="chart-sort-btn" data-sort="desc" title="Sort Descending"><i class="fa-solid fa-arrow-down-wide-short"></i></button>
+                                </div>
+                                <i class="fa-solid fa-chart-line text-muted"></i>
+                            </div>
+                        </div>
+                        <div class="chart-container-wrapper" style="height: 250px;">
+                            <canvas id="irrByProjectChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Row 3: Profit & Peak Equity by Project -->
+            <div class="row g-3 mb-4">
+                <!-- Development Profit by Project -->
+                <div class="col-12 col-lg-6">
+                    <div class="card-master">
+                        <div class="card-title-bar">
+                            <h3>Development Profit by Project <span class="card-subtitle">Net profits ($)</span></h3>
+                            <div class="d-flex align-items-center">
+                                <div class="chart-sort-controls" data-chart="profitByProjectChart">
+                                    <button class="chart-sort-btn active" data-sort="default" title="Default Order"><i class="fa-solid fa-arrow-down-a-z"></i></button>
+                                    <button class="chart-sort-btn" data-sort="asc" title="Sort Ascending"><i class="fa-solid fa-arrow-up-wide-short"></i></button>
+                                    <button class="chart-sort-btn" data-sort="desc" title="Sort Descending"><i class="fa-solid fa-arrow-down-wide-short"></i></button>
+                                </div>
+                                <i class="fa-solid fa-sack-dollar text-muted"></i>
+                            </div>
+                        </div>
+                        <div class="chart-container-wrapper" style="height: 250px;">
+                            <canvas id="profitByProjectChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Peak Equity by Project -->
+                <div class="col-12 col-lg-6">
+                    <div class="card-master">
+                        <div class="card-title-bar">
+                            <h3>Peak Equity by Project <span class="card-subtitle">Maximum cash exposure required</span></h3>
+                            <div class="d-flex align-items-center">
+                                <div class="chart-sort-controls" data-chart="peakEquityByProjectChart">
+                                    <button class="chart-sort-btn active" data-sort="default" title="Default Order"><i class="fa-solid fa-arrow-down-a-z"></i></button>
+                                    <button class="chart-sort-btn" data-sort="asc" title="Sort Ascending"><i class="fa-solid fa-arrow-up-wide-short"></i></button>
+                                    <button class="chart-sort-btn" data-sort="desc" title="Sort Descending"><i class="fa-solid fa-arrow-down-wide-short"></i></button>
+                                </div>
+                                <i class="fa-solid fa-building-columns text-muted"></i>
+                            </div>
+                        </div>
+                        <div class="chart-container-wrapper" style="height: 250px;">
+                            <canvas id="peakEquityByProjectChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Row 4: Peak Equity by Date Timeline -->
+            <div class="row g-3 mb-4">
+                <div class="col-12">
+                    <div class="card-master">
+                        <div class="card-title-bar">
+                            <h3>Peak Equity Milestones by Date <span class="card-subtitle">Timeline view of peak cash requirements across the portfolio</span></h3>
+                            <i class="fa-solid fa-calendar-days text-muted"></i>
+                        </div>
+                        <div class="chart-container-wrapper" style="height: 300px;">
+                            <canvas id="peakEquityByDateChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Row 4: Detailed Comparison Table -->
+            <div class="row g-3">
+                <div class="col-12">
+                    <div class="card-master">
+                        <div class="card-title-bar">
+                            <h3>Portfolio Metrics Summary Table <span class="card-subtitle">Click header to sort. Click project name to inspect details.</span></h3>
+                            <i class="fa-solid fa-table text-muted"></i>
+                        </div>
+                        
+                        <div class="yl-table-container">
+                            <table class="table-yl" id="portfolioTable">
+                                <thead>
+                                    <tr>
+                                        <th data-sort="projectName" class="sorted-asc">Project</th>
+                                        <th data-sort="status">Status</th>
+                                        <th>Current Stage(s)</th>
+                                        <th data-sort="revenue" class="text-end">Revenue</th>
+                                        <th data-sort="profit" class="text-end">Profit</th>
+                                        <th data-sort="margin" class="text-end">Margin</th>
+                                        <th data-sort="irr" class="text-end">IRR</th>
+                                        <th data-sort="peakEquity" class="text-end">Peak Equity</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="portfolioTableBody">
+                                    <!-- Populated dynamically by portfolio.js -->
+                                    <tr>
+                                        <td colspan="8" class="text-center text-muted py-5">
+                                            <i class="fa-solid fa-spinner fa-spin fs-4 mb-2"></i>
+                                            <p class="mb-0">Loading table data...</p>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- JS Core Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+    <!-- Custom Modules -->
+    <script src="../js/data_loader.js?v=2"></script>
+    <script src="../js/state.js?v=2"></script>
+    <script src="../js/common.js?v=2"></script>
+    <script src="../js/filters.js?v=2"></script>
+    <script src="../js/charts.js?v=2"></script>
+    <script src="../js/portfolio.js?v=2"></script>
+</body>
+</html>

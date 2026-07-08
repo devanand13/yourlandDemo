@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AP / AR Aging - YourLand Dashboard</title>
+    
+    <!-- CDNs -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.36.0/tabler-icons.min.css" rel="stylesheet">
+    
+    <!-- CSS styles -->
+    <link href="../css/style.css" rel="stylesheet">
+    <link href="../css/components.css" rel="stylesheet">
+    
+    <style>
+    .wrap{padding:0.5rem 0;font-family:var(--font-sans)}
+    .topbar{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1.25rem;gap:12px}
+    .t1{font-size:18px;font-weight:500;color:var(--text-primary)}
+    .t2{font-size:13px;color:var(--text-muted);margin-top:3px}
+    .badge{font-size:11px;color:var(--text-muted);border:0.5px solid var(--border);border-radius:20px;padding:4px 12px;white-space:nowrap}
+    .proj-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1.25rem;align-items:center}
+    .proj-lbl{font-size:12px;color:var(--text-muted);margin-right:4px}
+    .pb{font-size:12px;font-weight:500;padding:5px 13px;border-radius:20px;border:0.5px solid var(--border-strong);background:transparent;color:var(--text-secondary);cursor:pointer}
+    .pb:hover{background:var(--surface-1)}
+    .pb.on{background:#FFE7CC;color:#7A5A28;border-color:#FF8600}
+    select{font-size:12px;font-family:var(--font-sans);padding:4px 28px 4px 10px;border-radius:20px;border:0.5px solid var(--border-strong);background:var(--surface-1);color:var(--text-primary);cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23898781' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center}
+    .type-row{display:flex;gap:8px;margin-bottom:1.25rem}
+    .tb{font-size:13px;font-weight:500;padding:7px 16px;border-radius:var(--radius);border:0.5px solid var(--border-strong);background:transparent;color:var(--text-secondary);cursor:pointer}
+    .tb.on{background:#FF8600;color:#fff;border-color:#FF8600}
+    .kpis{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin-bottom:1.5rem}
+    .kpi{background:var(--surface-1);border-radius:var(--radius);padding:12px 14px;border:0.5px solid var(--border)}
+    .kpi-l{font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px}
+    .kpi-v{font-size:20px;font-weight:500;color:var(--text-primary);font-variant-numeric:tabular-nums}
+    .kpi-v.warn{color:#D9691E}
+    .kpi-v.danger{color:#7A2E1C}
+    .kpi-v.ok{color:#2E6B4F}
+    .legend{display:flex;gap:16px;margin-bottom:10px;flex-wrap:wrap}
+    .leg{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text-secondary)}
+    .leg-sq{width:10px;height:10px;border-radius:2px;flex-shrink:0}
+    .chart-box{position:relative;width:100%;height:280px;margin-bottom:1.5rem}
+    .section-l{font-size:11px;font-weight:500;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px}
+    .tbl-scroll{overflow-x:auto}
+    table{width:100%;border-collapse:collapse;font-size:13px;table-layout:fixed}
+    th{font-size:11px;font-weight:500;color:var(--text-muted);text-align:right;padding:0 10px 8px;border-bottom:0.5px solid var(--border);white-space:nowrap}
+    th:first-child,th:nth-child(2){text-align:left}
+    td{padding:9px 10px;text-align:right;border-bottom:0.5px solid var(--border);color:var(--text-primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-variant-numeric:tabular-nums}
+    td:first-child,td:nth-child(2){text-align:left}
+    tr.grand td{font-weight:500;background:#FFE7CC;color:#1B1B23;border-top:2px solid #FF8600}
+    tr:last-child td{border-bottom:none}
+    .pill{display:inline-flex;font-size:10px;font-weight:500;padding:2px 8px;border-radius:20px}
+    .pill-cur{background:#E7F0EA;color:#2E6B4F}
+    .pill-30{background:#FFE7CC;color:#7A5A28}
+    .pill-60{background:#FDE9DA;color:#7A3510}
+    .pill-90{background:#F6E7E1;color:#B0492E}
+    .pill-90p{background:#7A2E1C;color:#fff}
+    .muted{color:var(--text-muted)}
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Injected dynamically by common.js -->
+        <header class="top-navbar"></header>
+        
+        <!-- Injected dynamically by common.js -->
+        <nav class="page-nav-bar"></nav>
+        
+        <!-- Dashboard Canvas -->
+        <main class="dashboard-canvas">
+            <h2 class="sr-only">NTT Property Development AP/AR aging report showing outstanding invoices by contact and aging bucket across multiple projects, with project selector and AR/AP tabs.</h2>
+            
+            <div class="wrap">
+              <div class="topbar">
+                <div>
+                  <div class="t1"><i class="ti ti-file-invoice" style="font-size:16px;vertical-align:-2px;margin-right:6px" aria-hidden="true"></i>AP / AR aging</div>
+                  <div class="t2" id="subTitle">As at 3 July 2026 &nbsp;·&nbsp; NTT Property Development</div>
+                </div>
+                <span class="badge">Illustrative — for discussion only</span>
+              </div>
+
+              <div class="proj-row">
+                <span class="proj-lbl"><i class="ti ti-building" style="font-size:13px;vertical-align:-1px;margin-right:3px" aria-hidden="true"></i>Project</span>
+                <select id="projectSelect" onchange="changeProject(this.value)">
+                  <option value="all">All projects</option>
+                  <option value="P1">Ridgeway Estate</option>
+                  <option value="P2">Bayside Gardens</option>
+                  <option value="P3">North Haven</option>
+                  <option value="P4">Greenfield Park</option>
+                </select>
+              </div>
+
+              <div class="type-row">
+                <button class="tb on" onclick="selectType('AR',this)"><i class="ti ti-arrow-down-circle" style="font-size:14px;vertical-align:-2px;margin-right:5px" aria-hidden="true"></i>Accounts receivable (AR)</button>
+                <button class="tb" onclick="selectType('AP',this)"><i class="ti ti-arrow-up-circle" style="font-size:14px;vertical-align:-2px;margin-right:5px" aria-hidden="true"></i>Accounts payable (AP)</button>
+              </div>
+
+              <div class="kpis">
+                <div class="kpi"><div class="kpi-l">Total outstanding</div><div class="kpi-v" id="kTot">—</div></div>
+                <div class="kpi"><div class="kpi-l">Current</div><div class="kpi-v ok" id="kCur">—</div></div>
+                <div class="kpi"><div class="kpi-l">1–30 days</div><div class="kpi-v warn" id="k30">—</div></div>
+                <div class="kpi"><div class="kpi-l">31–90 days</div><div class="kpi-v warn" id="k60">—</div></div>
+                <div class="kpi"><div class="kpi-l">Over 90 days</div><div class="kpi-v danger" id="k90">—</div></div>
+              </div>
+
+              <div class="legend" style="justify-content:space-between">
+                <div style="display:flex;gap:16px;flex-wrap:wrap">
+                  <span class="leg"><span class="leg-sq" style="background:#2E6B4F"></span>Current</span>
+                  <span class="leg"><span class="leg-sq" style="background:#FF8600"></span>1–30 days</span>
+                  <span class="leg"><span class="leg-sq" style="background:#D9691E"></span>31–60 days</span>
+                  <span class="leg"><span class="leg-sq" style="background:#B0492E"></span>61–90 days</span>
+                  <span class="leg"><span class="leg-sq" style="background:#7A2E1C"></span>Over 90 days</span>
+                </div>
+                <span class="muted" style="font-size:11px">Top 6 contacts by outstanding &middot; </span>
+              </div>
+              <div class="chart-box"><canvas id="agingChart" role="img" aria-label="Horizontal stacked bar chart of the largest outstanding contacts by aging bucket, with remaining contacts grouped as Other">Outstanding invoice amounts for the largest contacts.</canvas></div>
+
+              <div class="section-l">Invoice breakdown</div>
+              <div class="tbl-scroll">
+                <table>
+                  <colgroup>
+                    <col style="width:140px"><col style="width:120px"><col style="width:80px">
+                    <col style="width:90px"><col style="width:90px"><col style="width:90px"><col style="width:100px">
+                  </colgroup>
+                  <thead><tr>
+                    <th>Contact</th><th>Stage</th><th>Lot</th><th>Amount due</th><th>Invoice date</th><th>Due date</th><th>Aging</th>
+                  </tr></thead>
+                  <tbody id="tbody"></tbody>
+                </table>
+              </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- CDNs & Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+    <script src="../js/common.js"></script>
+    
+    <script>
+        injectShellLayout('xero_aging');
+    </script>
+    
+    <script>
+    function fmt(n){if(!n||n===0)return'—';return'$'+Math.round(n).toLocaleString();}
+    function fmtK(n){if(!n||n===0)return'—';const a=Math.abs(n);return(n<0?'-':'')+'$'+(a>=1000000?(a/1000000).toFixed(2)+'M':(a/1000).toFixed(1)+'k');}
+
+    const projects={
+      P1:{name:'Ridgeway Estate',tid:'02d26831-a0f0-4ae7-a2e7-a8a576775fdd'},
+      P2:{name:'Bayside Gardens',tid:'a9167fae-18a4-4dfc-91ec-04e896715447'},
+      P3:{name:'North Haven',tid:'f3c21a44-9b2e-4d7c-b8f1-6e3d5a2c9847'},
+      P4:{name:'Greenfield Park',tid:'d7e82b55-1c3f-4a8d-c9g2-7f4e6b3d0958'},
+    };
+
+    const arContacts=['Ridgeway Homes Pty Ltd','Bayside Developments','Greenfield Trust','Hamilton Smith Pty','City Agency','Maddox Group'];
+    const apContacts=['ABC Civil Contractors','Landscape Plus Pty Ltd','Beck Legal Services','Ridgeway Utilities','PC Complete','Summit Earthworks'];
+    const stages=['Stage 1','Stage 2','Stage 3','Project Wide','Unassigned'];
+    const buckets=['Current','1-30 days','31-60 days','61-90 days','Over 90 days'];
+    const bucketColors=['#2E6B4F','#FF8600','#D9691E','#B0492E','#7A2E1C'];
+
+    function rnd(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
+    function randDate(daysBack){const d=new Date();d.setDate(d.getDate()-rnd(0,daysBack));return d.toLocaleDateString('en-AU',{day:'2-digit',month:'2-digit',year:'numeric'});}
+
+    const invoices=[];
+    ['P1','P2','P3','P4'].forEach(pid=>{
+      arContacts.forEach((c,ci)=>{
+        const bucket=buckets[rnd(0,4)];
+        const amt=rnd(5000,85000);
+        invoices.push({pid,type:'AR',contact:c,stage:stages[ci%5],lot:`Lot ${200+rnd(1,99)}`,amount:amt,invDate:randDate(180),dueDate:randDate(120),bucket});
+      });
+      apContacts.forEach((c,ci)=>{
+        const bucket=['Current','Current','1-30 days','31-60 days','Unassigned'][ci]||'Current';
+        const realBucket=bucket==='Unassigned'?'Current':bucket;
+        const amt=rnd(2000,45000);
+        invoices.push({pid,type:'AP',contact:c,stage:'Unassigned',lot:'—',amount:amt,invDate:randDate(90),dueDate:randDate(60),bucket:realBucket});
+      });
+    });
+
+    let currentProject='all';
+    let currentType='AR';
+    let chartInst=null;
+
+    function getFiltered(){
+      return invoices.filter(r=>
+        (currentProject==='all'||r.pid===currentProject) && r.type===currentType
+      );
+    }
+
+    function pillClass(b){
+      if(b==='Current')return'pill-cur';
+      if(b==='1-30 days')return'pill-30';
+      if(b==='31-60 days')return'pill-60';
+      if(b==='61-90 days')return'pill-90';
+      return'pill-90p';
+    }
+
+    function updateKPIs(rows){
+      const tot=rows.reduce((a,r)=>a+r.amount,0);
+      const byBucket=b=>rows.filter(r=>r.bucket===b).reduce((a,r)=>a+r.amount,0);
+      document.getElementById('kTot').textContent=fmtK(tot);
+      document.getElementById('kCur').textContent=fmtK(byBucket('Current'));
+      document.getElementById('k30').textContent=fmtK(byBucket('1-30 days'));
+      document.getElementById('k60').textContent=fmtK((byBucket('31-60 days'))+(byBucket('61-90 days')));
+      document.getElementById('k90').textContent=fmtK(byBucket('Over 90 days'));
+    }
+
+    function updateChart(rows){
+      if(chartInst)chartInst.destroy();
+
+      // Aggregate total outstanding per contact, then show only the largest
+      // exposures individually — this keeps the chart readable no matter how
+      // many contacts exist (10 or 500).
+      const TOP_N=8;
+      const totals={};
+      rows.forEach(r=>{ totals[r.contact]=(totals[r.contact]||0)+r.amount; });
+      const rankedContacts=Object.keys(totals).sort((a,b)=>totals[b]-totals[a]);
+      const topContacts=rankedContacts.slice(0,TOP_N);
+      const otherContacts=rankedContacts.slice(TOP_N);
+
+      const labels=topContacts.map(c=>c.length>22?c.slice(0,20)+'…':c);
+      if(otherContacts.length>0) labels.push(`Other contacts (${otherContacts.length})`);
+
+      const datasets=buckets.map((b,bi)=>{
+        const data=topContacts.map(c=>rows.filter(r=>r.contact===c&&r.bucket===b).reduce((a,r)=>a+r.amount,0));
+        if(otherContacts.length>0){
+          const otherSum=rows.filter(r=>otherContacts.includes(r.contact)&&r.bucket===b).reduce((a,r)=>a+r.amount,0);
+          data.push(otherSum);
+        }
+        return{
+          label:b,
+          data,
+          backgroundColor:bucketColors[bi],
+          borderRadius:2,borderSkipped:false
+        };
+      });
+
+      chartInst=new Chart(document.getElementById('agingChart'),{
+        type:'bar',
+        data:{labels,datasets},
+        options:{
+          indexAxis:'y',
+          responsive:true,maintainAspectRatio:false,
+          plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.dataset.label+': '+fmt(c.raw)}}},
+          scales:{
+            x:{stacked:true,grid:{color:'#E3E3E2',lineWidth:0.5},ticks:{font:{size:11},color:'#69727D',callback:v=>'$'+(v/1000).toFixed(0)+'k'}},
+            y:{stacked:true,grid:{display:false},ticks:{font:{size:11},color:'#69727D'}}
+          }
+        }
+      });
+    }
+
+    function updateTable(rows){
+      const body=document.getElementById('tbody');body.innerHTML='';
+      const sorted=[...rows].sort((a,b)=>b.amount-a.amount);
+      sorted.forEach(r=>{
+        const tr=document.createElement('tr');
+        tr.innerHTML=`
+          <td style="font-weight:500;overflow:hidden;text-overflow:ellipsis" title="${r.contact}">${r.contact}</td>
+          <td style="color:var(--text-secondary)">${r.stage}</td>
+          <td style="color:var(--text-secondary)">${r.lot}</td>
+          <td>${fmt(r.amount)}</td>
+          <td style="color:var(--text-muted)">${r.invDate}</td>
+          <td style="color:var(--text-muted)">${r.dueDate}</td>
+          <td><span class="pill ${pillClass(r.bucket)}">${r.bucket}</span></td>`;
+        body.appendChild(tr);
+      });
+      const tot=rows.reduce((a,r)=>a+r.amount,0);
+      const gr=document.createElement('tr');gr.className='grand';
+      gr.innerHTML=`<td colspan="3">Total</td><td>${fmt(tot)}</td><td colspan="3"></td>`;
+      body.appendChild(gr);
+    }
+
+    function updateSubTitle(){
+      const pName=currentProject==='all'?'All projects':projects[currentProject].name;
+      document.getElementById('subTitle').textContent=`As at 3 July 2026 · NTT Property Development · ${pName}`;
+    }
+
+    function render(){
+      const rows=getFiltered();
+      updateKPIs(rows);
+      updateChart(rows);
+      updateTable(rows);
+      updateSubTitle();
+    }
+
+    function changeProject(pid){
+      currentProject=pid;
+      render();
+    }
+
+    function selectType(type,btn){
+      document.querySelectorAll('.tb').forEach(b=>b.classList.remove('on'));
+      btn.classList.add('on');
+      currentType=type;
+      render();
+    }
+
+    render();
+    </script>
+</body>
+</html>
