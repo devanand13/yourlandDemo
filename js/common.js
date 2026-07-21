@@ -741,3 +741,105 @@ function applyWhatIf(changes) {
         AppState.notify();
     }
 }
+
+// ── Sales Dashboard pages (Salesforce) ────────────────────────────────────────
+window.SALES_PAGES = {
+    'sf_overview':      { title: 'Sales Overview',         file: 'sf_1_sales_overview.html',      icon: 'fa-solid fa-chart-pie' },
+    'sf_leads':         { title: 'Leads Overview',         file: 'sf_2_leads_overview.html',       icon: 'fa-solid fa-users' },
+    'sf_deposits':      { title: 'Deposits & Contracts',   file: 'sf_3_deposits_contracts.html',   icon: 'fa-solid fa-file-signature' },
+    'sf_leads_detail':  { title: 'Leads Detail',           file: 'sf_4_leads_detail.html',         icon: 'fa-solid fa-table-list' },
+    'sf_opp_detail':    { title: 'Opportunities Detail',   file: 'sf_5_opp_detail.html',           icon: 'fa-solid fa-handshake' },
+    'sf_lots_detail':   { title: 'Lots Detail',            file: 'sf_6_lots_detail.html',          icon: 'fa-solid fa-map-location-dot' },
+    'sf_contactability':{ title: 'Contactability',         file: 'sf_7_contactability.html',       icon: 'fa-solid fa-phone-volume' },
+};
+
+/**
+ * Injects the shell layout for Sales (Salesforce) pages.
+ * Call this instead of injectShellLayout() from Sales pages.
+ */
+function injectSalesShellLayout(activePage) {
+    const isCollapsed = localStorage.getItem('yl-sidebar-collapsed') === 'true';
+    const appContainer = document.querySelector('.app-container');
+    if (appContainer && isCollapsed) appContainer.classList.add('sidebar-collapsed');
+
+    // Top navbar
+    const topNavbar = document.querySelector('.top-navbar');
+    if (topNavbar) {
+        const pageTitle = SALES_PAGES[activePage] ? SALES_PAGES[activePage].title : 'Sales Dashboard';
+        topNavbar.innerHTML = `
+            <div class="top-navbar-left">
+                <h1 class="page-title-heading">${pageTitle}</h1>
+            </div>
+            <!-- Filters are inline in each page (Xero-style) -->
+        `;
+    }
+
+    // Sidebar
+    const pageNavBar = document.querySelector('.page-nav-bar');
+    if (pageNavBar) {
+        const sections = [
+            { label: 'Sales Intelligence', keys: ['sf_overview','sf_leads','sf_deposits'] },
+            { label: 'Detail Tables',      keys: ['sf_leads_detail','sf_opp_detail','sf_lots_detail'] },
+            { label: 'Engagement',         keys: ['sf_contactability'] },
+        ];
+        let menuHTML = '';
+        sections.forEach(sec => {
+            menuHTML += `<li class="menu-section-label">${sec.label}</li>`;
+            sec.keys.forEach(key => {
+                const item = SALES_PAGES[key];
+                menuHTML += `
+                    <li class="menu-item ${activePage === key ? 'active' : ''}">
+                        <a href="${item.file}" class="menu-link" title="${item.title}">
+                            <span class="menu-icon"><i class="${item.icon}"></i></span>
+                            <span class="menu-text">${item.title}</span>
+                        </a>
+                    </li>`;
+            });
+        });
+
+        pageNavBar.innerHTML = `
+            <div class="sidebar-header">
+                <div class="brand-section">
+                    <a href="../index.html" class="brand-logo-link" style="display:flex;align-items:center">
+                        <img src="../data/YourLand Sign.png" alt="YourLand" class="brand-logo-img logo-full">
+                        <img src="../data/Yourland mini sign.png" alt="YL" class="brand-logo-img logo-mini">
+                    </a>
+                </div>
+                <button id="sidebarToggle" class="sidebar-toggle-btn" title="Toggle Navigation">
+                    <i class="fa-solid fa-chevron-left toggle-icon"></i>
+                </button>
+            </div>
+            <div class="sidebar-body">
+                <ul class="sidebar-menu">${menuHTML}</ul>
+            </div>
+            <div class="sidebar-footer">
+                <a href="../index.html" class="sidebar-help-link">
+                    <span class="menu-icon"><i class="fa-solid fa-arrow-left"></i></span>
+                    <span class="menu-text">Back to Hub</span>
+                </a>
+            </div>`;
+
+        const toggleBtn = pageNavBar.querySelector('#sidebarToggle');
+        if (toggleBtn) {
+            toggleBtn.addEventListener('click', () => {
+                const c = document.querySelector('.app-container');
+                if (c) {
+                    const collapsed = c.classList.toggle('sidebar-collapsed');
+                    localStorage.setItem('yl-sidebar-collapsed', collapsed ? 'true' : 'false');
+                }
+            });
+        }
+    }
+
+    // Footer
+    let footer = document.querySelector('footer');
+    if (!footer) {
+        footer = document.createElement('footer');
+        footer.className = 'py-3 mt-auto text-center border-top bg-white text-muted';
+        footer.style.fontSize = '0.75rem';
+        document.querySelector('.app-container').appendChild(footer);
+    }
+    footer.innerHTML = `<div class="container-fluid"><span>&copy; ${new Date().getFullYear()} YourLand Development Pty Ltd. All rights reserved. &bull; Powered by CodeFusion.</span></div>`;
+}
+
+window.injectSalesShellLayout = injectSalesShellLayout;

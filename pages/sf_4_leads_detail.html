@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Leads Detail — YourLand Sales</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<link href="../css/style.css" rel="stylesheet">
+<link href="../css/components.css" rel="stylesheet">
+<style>
+/* ── Xero-style inline controls ── */
+.wrap{padding:.5rem 0}
+.topbar{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1.25rem;gap:12px;border-bottom:.5px solid var(--yl-border);padding-bottom:1rem}
+.titles .t1{font-size:17px;font-weight:600;color:var(--yl-text);display:flex;align-items:center;gap:8px;font-family:var(--yl-font-title)}
+.titles .t2{font-size:12px;color:var(--yl-text-muted);margin-top:3px}
+.badge-demo{font-size:11px;color:var(--yl-text-muted);border:.5px solid var(--yl-border);border-radius:20px;padding:3px 10px;white-space:nowrap}
+.controls{display:flex;flex-direction:column;gap:7px;margin-bottom:1.25rem}
+.ctrl-row{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.ctrl-lbl{font-size:11px;font-weight:500;color:var(--yl-text-muted);text-transform:uppercase;letter-spacing:.05em;width:60px;flex-shrink:0}
+.fb{font-size:12px;font-weight:500;padding:4px 12px;border-radius:20px;border:.5px solid var(--yl-border);background:transparent;color:var(--yl-text-muted);cursor:pointer;transition:all .12s}
+.fb:hover{background:var(--yl-bg)}
+.fb.on{background:#FFE7CC;color:#7A5A28;border-color:#F58220}
+.sf-ctrl-select{font-size:12px;font-family:var(--yl-font-body);padding:4px 28px 4px 10px;border-radius:20px;border:.5px solid var(--yl-border);background:var(--yl-card-bg);color:var(--yl-text);cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23898781' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center}
+/* KPI cards */
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:1.25rem}
+.kpi{background:var(--yl-card-bg);border-radius:8px;padding:13px 15px;border:.5px solid var(--yl-border);position:relative;overflow:hidden}
+.kpi::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;background:var(--yl-primary)}
+.kpi-l{font-size:11px;color:var(--yl-text-muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px}
+.kpi-v{font-size:22px;font-weight:700;font-family:var(--yl-font-title);color:var(--yl-text);font-variant-numeric:tabular-nums}
+.kpi-sub{font-size:11px;color:var(--yl-text-muted);margin-top:2px}
+.kpi-badge{display:inline-flex;padding:.1rem .35rem;border-radius:3px;font-size:.68rem;font-weight:600}
+.kpi-up{background:#E2F0D9;color:#385723}
+.kpi-dn{background:#FCE4D6;color:#C65911}
+/* Chart cards */
+.sf-card{background:var(--yl-card-bg);border:.5px solid var(--yl-border);border-radius:8px;padding:14px;height:100%;display:flex;flex-direction:column}
+.sf-card:hover{box-shadow:0 4px 10px rgba(0,0,0,.05)}
+.sf-ct{display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem;padding-bottom:.5rem;border-bottom:.5px solid #F3F3F3}
+.sf-ct h3{font-size:.85rem;font-weight:600;color:var(--yl-text);margin:0;font-family:var(--yl-font-title)}
+.sf-sub{font-size:.7rem;color:var(--yl-text-light)}
+.sf-leg{display:flex;gap:.75rem;flex-wrap:wrap}
+.sf-li{display:flex;align-items:center;gap:.3rem;font-size:.7rem;color:var(--yl-text-muted)}
+.sf-ld{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.sf-ls{width:10px;height:10px;border-radius:2px;flex-shrink:0}
+.chart-box{position:relative;width:100%}
+.chart-box.h180{height:180px}.chart-box.h200{height:200px}.chart-box.h220{height:220px}
+/* Donut */
+.donut-wrap{display:flex;flex-direction:column;align-items:center;gap:.4rem}
+.donut-box{position:relative;width:140px;height:140px}
+.donut-ctr{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center}
+.donut-ctr .big{font-family:var(--yl-font-title);font-size:1.3rem;font-weight:700;color:var(--yl-text)}
+.donut-ctr .sm{font-size:.65rem;color:var(--yl-text-muted)}
+.dleg{width:100%;font-size:.72rem;margin-top:.2rem}
+.dleg-row{display:flex;align-items:center;justify-content:space-between;padding:.12rem 0}
+.dleg-left{display:flex;align-items:center;gap:.35rem}
+.dleg-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+/* Hbar */
+.hbar-row{display:flex;align-items:center;gap:.4rem;margin-bottom:.35rem}
+.hbar-lbl{font-size:.71rem;color:var(--yl-text-muted);text-align:right;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hbar-track{flex:1;height:17px;background:#F3F3F3;border-radius:3px;overflow:hidden}
+.hbar-fill{height:100%;border-radius:3px;display:flex;align-items:center;padding:0 .35rem;font-size:.67rem;font-weight:700;color:#fff;min-width:20px;transition:width .4s ease}
+/* Table */
+.sf-tbl{width:100%;border-collapse:collapse;font-size:.78rem}
+.sf-tbl th{font-size:.68rem;font-weight:600;color:var(--yl-text-muted);text-align:left;padding:.55rem .8rem;border-bottom:.5px solid var(--yl-border);background:var(--yl-card-bg);white-space:nowrap;text-transform:uppercase;letter-spacing:.3px}
+.sf-tbl td{padding:.55rem .8rem;border-bottom:.5px solid var(--yl-border);color:var(--yl-text);white-space:nowrap}
+.sf-tbl tr:hover td{background:var(--yl-bg)}
+.sf-tbl tr:last-child td{border-bottom:none}
+/* Pill */
+.pill{display:inline-flex;font-size:.67rem;font-weight:600;padding:.12rem .45rem;border-radius:20px}
+.pill-yes{background:#E2F0D9;color:#27500A}.pill-no{background:#FCE4D6;color:#C65911}
+.pill-signed{background:#FFF3CD;color:#664D03}.pill-settled{background:#E9ECEF;color:#495057}
+.pill-uncond{background:#D1ECF1;color:#0C5460}
+/* DQ note */
+.dq{font-size:.7rem;color:var(--yl-text-light);font-style:italic;padding:.3rem .5rem;background:#FAFAFA;border-left:3px solid var(--yl-primary);border-radius:0 3px 3px 0;margin-top:.4rem}
+/* Blocked */
+.sf-blocked{background:#FFF3CD;border:.5px solid #FFC107;border-radius:6px;padding:.7rem .9rem;margin-bottom:1rem;display:flex;align-items:flex-start;gap:.75rem;font-size:.78rem;color:#664D03}
+/* Warning banner */
+.sf-warn{background:#FCE4D6;border:.5px solid #F58220;border-radius:6px;padding:.7rem .9rem;margin-bottom:1rem;display:flex;align-items:flex-start;gap:.75rem;font-size:.78rem;color:#7A3A00}
+/* Map ph */
+.map-ph{background:#F0F4F8;border:.5px solid var(--yl-border);border-radius:6px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.4rem;color:var(--yl-text-muted);font-size:.78rem;height:185px}
+
+</style>
+</head>
+<body>
+<div class="app-container" id="appContainer">
+  <nav class="page-nav-bar"></nav>
+  <header class="top-navbar"></header>
+  <main class="dashboard-canvas">
+    <div class="wrap">
+
+      <div class="topbar">
+        <div class="titles">
+          <div class="t1"><i class="fa-solid fa-table-list"></i>&nbsp;Leads Detail</div>
+          <div class="t2" id="sfSubtitle">All projects &bull; Jul 2026</div>
+        </div>
+        <span class="badge-demo">Illustrative — for discussion only</span>
+      </div>
+      <div class="controls">
+        <div class="ctrl-row">
+          <span class="ctrl-lbl">Project</span>
+          <select class="sf-ctrl-select" id="sfProjSelect" onchange="sfSetProject(this.value)">
+            <option value="All">All projects</option>
+            <option>Officer Central</option>
+            <option>Society 1056</option>
+            <option>Wedge Road</option>
+            <option>Officer Fields</option>
+            <option>Seventh Bend</option>
+            <option>Marran Run</option>
+            <option>Elmwood</option>
+          </select>
+        </div>
+      </div>
+<div class="kpis mb-3">
+  <div class="kpi"><div class="kpi-l">Total Leads</div><div class="kpi-v" id="k1">68,884</div><div class="kpi-sub">Jan 2021 — Jul 2026 &bull; 26 projects</div></div>
+  <div class="kpi"><div class="kpi-l">Showing (filtered)</div><div class="kpi-v" id="k2">—</div><div class="kpi-sub" id="k2s">rows visible</div></div>
+  <div class="kpi"><div class="kpi-l">Converted</div><div class="kpi-v" id="k3">14,998</div><div class="kpi-sub">22% conversion rate (all time)</div></div>
+  <div class="kpi"><div class="kpi-l">Date field</div><div class="kpi-v" style="font-size:1.1rem">created_date</div><div class="kpi-sub">original_enquiry_date only 81 rows</div></div>
+</div>
+<div class="row g-3">
+  <div class="col-md-8"><div class="sf-card">
+    <div class="sf-ct"><h3>Lead Records</h3><span class="sf-sub">buyer_sub_type shown (more granular than buyer_type) &bull; sorted newest first</span></div>
+    <div style="overflow-x:auto">
+      <table class="sf-tbl" id="leadTable">
+        <thead><tr><th>Created Date</th><th>ID</th><th>Name</th><th>Lead Method</th><th>Buyer Sub Type</th><th>Project</th></tr></thead>
+        <tbody id="leadTbody">
+          <tr data-project="Officer Central"><td>11 Jul 2026</td><td><span style="font-size:.7rem;color:var(--yl-text-muted)">00QOd00000XqCmr</span></td><td style="font-weight:500">Kuldeep Singh</td><td>Walk-in</td><td>First Home Buyer</td><td style="font-size:.75rem;color:var(--yl-text-muted)">Officer Central</td></tr>
+<tr data-project="Society 1056"><td>10 Jun 2026</td><td><span style="font-size:.7rem;color:var(--yl-text-muted)">00QOd00000Wqvvp</span></td><td style="font-weight:500">Leela John</td><td>Online</td><td>Down Sizer</td><td style="font-size:.75rem;color:var(--yl-text-muted)">Society 1056</td></tr>
+<tr data-project="Officer Central"><td>16 Apr 2026</td><td><span style="font-size:.7rem;color:var(--yl-text-muted)">00QOd00000V2AKo</span></td><td style="font-weight:500">Blessy Mannil</td><td>Online</td><td>Upgrader</td><td style="font-size:.75rem;color:var(--yl-text-muted)">Officer Central</td></tr>
+<tr data-project="Wedge Road"><td>9 Apr 2026</td><td><span style="font-size:.7rem;color:var(--yl-text-muted)">00QOd00000UntTW</span></td><td style="font-weight:500">Kahlen Chen</td><td>Online</td><td>Upgrader</td><td style="font-size:.75rem;color:var(--yl-text-muted)">Wedge Road</td></tr>
+<tr data-project="Officer Fields"><td>31 Mar 2026</td><td><span style="font-size:.7rem;color:var(--yl-text-muted)">00QOd00000UVXXt</span></td><td style="font-weight:500">Kamaljit Ratta</td><td>Online</td><td>First Home Buyer</td><td style="font-size:.75rem;color:var(--yl-text-muted)">Officer Fields</td></tr>
+<tr data-project="Seventh Bend"><td>8 Mar 2026</td><td><span style="font-size:.7rem;color:var(--yl-text-muted)">00QOd00000TfW86</span></td><td style="font-weight:500">Jack Lin</td><td>Walk-in</td><td>First Home Buyer</td><td style="font-size:.75rem;color:var(--yl-text-muted)">Seventh Bend</td></tr>
+<tr data-project="Officer Central"><td>7 Mar 2026</td><td><span style="font-size:.7rem;color:var(--yl-text-muted)">00QOd00000TdoVj</span></td><td style="font-weight:500">Karen Tran</td><td>Phone</td><td>Upgrader</td><td style="font-size:.75rem;color:var(--yl-text-muted)">Officer Central</td></tr>
+<tr data-project="Marran Run"><td>7 Sep 2025</td><td><span style="font-size:.7rem;color:var(--yl-text-muted)">00QOd00000NIATW</span></td><td style="font-weight:500">Adrian Marshall</td><td>Walk-in</td><td>First Home Buyer</td><td style="font-size:.75rem;color:var(--yl-text-muted)">Marran Run</td></tr>
+<tr data-project="Officer Central"><td>1 Sep 2025</td><td><span style="font-size:.7rem;color:var(--yl-text-muted)">00QOd00000N7kX7</span></td><td style="font-weight:500">Ayar Javier</td><td>Online</td><td>Down Sizer</td><td style="font-size:.75rem;color:var(--yl-text-muted)">Officer Central</td></tr>
+<tr data-project="Society 1056"><td>31 Aug 2025</td><td><span style="font-size:.7rem;color:var(--yl-text-muted)">00QOd00000N4gY6</span></td><td style="font-weight:500">Van Bay Vo</td><td>Phone</td><td>Long Term Cap.</td><td style="font-size:.75rem;color:var(--yl-text-muted)">Society 1056</td></tr>
+<tr data-project="Elmwood"><td>30 Aug 2025</td><td><span style="font-size:.7rem;color:var(--yl-text-muted)">00QOd00000N2vRh</span></td><td style="font-weight:500">Masooma Rezaie</td><td>Walk-in</td><td>Upgrader</td><td style="font-size:.75rem;color:var(--yl-text-muted)">Elmwood</td></tr>
+<tr data-project="Officer Central"><td>24 Aug 2025</td><td><span style="font-size:.7rem;color:var(--yl-text-muted)">00QOd00000MqOxd</span></td><td style="font-weight:500">Raman &amp; Seema Devgan</td><td>Phone</td><td>Upgrader</td><td style="font-size:.75rem;color:var(--yl-text-muted)">Officer Central</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="padding:.4rem 0;font-size:.71rem;color:var(--yl-text-muted)" id="leadMeta">Showing 12 of 68,884 records &bull; duplicate_lead &amp; uncontactable = 0 (not maintained in Salesforce — flagged to Grant)</div>
+  </div></div>
+  <div class="col-md-4"><div class="sf-card">
+    <div class="sf-ct"><h3>Daily Lead Count</h3><span class="sf-sub">Jul 2026</span></div>
+    <div style="overflow-y:auto;max-height:360px">
+      <table class="sf-tbl">
+        <thead><tr><th>Date</th><th style="text-align:right">Count</th></tr></thead>
+        <tbody>
+          <tr><td>Thu 16 Jul</td><td style="text-align:right;font-weight:600">18</td></tr>
+          <tr><td>Wed 15 Jul</td><td style="text-align:right;font-weight:600">35</td></tr>
+          <tr><td>Tue 14 Jul</td><td style="text-align:right;font-weight:600">33</td></tr>
+          <tr><td>Mon 13 Jul</td><td style="text-align:right;font-weight:600">29</td></tr>
+          <tr><td>Sun 12 Jul</td><td style="text-align:right;font-weight:600">41</td></tr>
+          <tr><td>Sat 11 Jul</td><td style="text-align:right;font-weight:600">39</td></tr>
+          <tr><td>Fri 10 Jul</td><td style="text-align:right;font-weight:600">32</td></tr>
+          <tr><td>Thu 9 Jul</td><td style="text-align:right;font-weight:600">40</td></tr>
+          <tr><td>Wed 8 Jul</td><td style="text-align:right;font-weight:600">32</td></tr>
+          <tr><td>Tue 7 Jul</td><td style="text-align:right;font-weight:600">38</td></tr>
+          <tr><td>Mon 6 Jul</td><td style="text-align:right;font-weight:600">37</td></tr>
+          <tr><td>Sun 5 Jul</td><td style="text-align:right;font-weight:600">48</td></tr>
+          <tr><td>Sat 4 Jul</td><td style="text-align:right;font-weight:600">52</td></tr>
+          <tr><td>Fri 3 Jul</td><td style="text-align:right;font-weight:600">37</td></tr>
+          <tr><td>Wed 1 Jul</td><td style="text-align:right;font-weight:600">48</td></tr>
+          <tr style="background:rgba(245,130,32,.05)"><td style="font-weight:700">Total (all time)</td><td style="text-align:right;font-weight:700;color:var(--yl-primary)">68,884</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div></div>
+</div>
+<script>
+
+const _charts = {};
+function mkChart(id, cfg) {
+  if (_charts[id]) { _charts[id].destroy(); }
+  const c = document.getElementById(id);
+  if (!c) return;
+  _charts[id] = new Chart(c, cfg);
+  return _charts[id];
+}
+const B='#1F4E79', B2='#5B9BD5', P='#F58220', G='#2E7D32', GR='#7F7F7F', RD='#DC3545', PU='#9B59B6';
+const baseOpts = {responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}};
+function scaleOpts(stacked) {
+  return {x:{stacked:!!stacked,grid:{display:false},ticks:{font:{size:10},color:'#999',maxTicksLimit:8}},
+          y:{stacked:!!stacked,grid:{color:'#F0F0F0'},ticks:{font:{size:10},color:'#999'}}};
+}
+function mkLine(id, labels, datasets) {
+  mkChart(id, {type:'line', data:{labels, datasets},
+    options: Object.assign({}, baseOpts, {scales: scaleOpts()})});
+}
+function mkBar(id, labels, datasets, stacked) {
+  mkChart(id, {type:'bar', data:{labels, datasets},
+    options: Object.assign({}, baseOpts, {scales: scaleOpts(stacked)})});
+}
+function mkBarH(id, labels, data, colors) {
+  mkChart(id, {type:'bar', data:{labels, datasets:[{data, backgroundColor:colors, borderRadius:3}]},
+    options:{...baseOpts, indexAxis:'y',
+      scales:{x:{grid:{color:'#F0F0F0'},ticks:{font:{size:10}}},
+              y:{grid:{display:false},ticks:{font:{size:10}}}}}});
+}
+function mkDonut(id, data, colors) {
+  mkChart(id, {type:'doughnut',
+    data:{labels:data.map((_,i)=>'i'+i), datasets:[{data, backgroundColor:colors, borderWidth:2, borderColor:'#fff', hoverOffset:4}]},
+    options:{cutout:'72%', plugins:{legend:{display:false}}, animation:{duration:400}}});
+}
+function mkCombo(id, labels, barData, lineData, barColor) {
+  mkChart(id, {type:'bar', data:{labels, datasets:[
+    {type:'bar', data:barData, backgroundColor:barColor||B2, borderRadius:3, yAxisID:'y'},
+    {type:'line', data:lineData, borderColor:B, fill:false, tension:.4, pointRadius:2, borderWidth:2, yAxisID:'y1'}
+  ]}, options:{...baseOpts, scales:{
+    x:{grid:{display:false}, ticks:{font:{size:10}, maxRotation:45}},
+    y:{grid:{color:'#F0F0F0'}, ticks:{font:{size:10}}},
+    y1:{position:'right', grid:{display:false}, ticks:{font:{size:10}}}
+  }}});
+}
+function fmtK(n) { return n>=1000 ? (n/1000).toFixed(1).replace('.0','')+'K' : n; }
+function setText(id, val) { const el=document.getElementById(id); if(el) el.textContent=val; }
+function setHtml(id, val) { const el=document.getElementById(id); if(el) el.innerHTML=val; }
+
+// Filter state
+const sfState = { project: 'All', grain: 'weekly', buyerType: 'all', period: '3m' };
+
+function sfSetProject(val) {
+  sfState.project = val;
+  const el = document.getElementById('sfProjLabel');
+  if(el) el.textContent = val==='All'?'All projects':val;
+  sfRender();
+}
+function sfSetGrain(g) {
+  sfState.grain = g;
+  document.querySelectorAll('.fb-grain').forEach(b => {
+    b.classList.toggle('on', b.dataset.grain===g);
+  });
+  sfRender();
+}
+function sfSetPeriod(p) {
+  sfState.period = p;
+  document.querySelectorAll('.fb-period').forEach(b => {
+    b.classList.toggle('on', b.dataset.period===p);
+  });
+  sfRender();
+}
+window.sfSetProject = sfSetProject;
+window.sfSetGrain   = sfSetGrain;
+window.sfSetPeriod  = sfSetPeriod;
+
+function sfRender() {
+  const proj = sfState.project;
+  setText('sfSubtitle', (proj==='All'?'All projects':proj) + ' • Jul 2026');
+
+  // Filter table rows
+  const rows = document.querySelectorAll('#leadTbody tr');
+  let visible = 0;
+  rows.forEach(r => {
+    const show = proj==='All' || r.dataset.project===proj;
+    r.style.display = show ? '' : 'none';
+    if(show) visible++;
+  });
+
+  setText('k2', visible);
+  setText('k2s', 'rows visible in demo sample');
+
+  // Update KPI if project selected
+  if(proj !== 'All') {
+    const d = SF_DATA.get(proj, 'weekly');
+    const bt = d.buyerType;
+    const total = Object.values(bt).reduce((a,b)=>a+b,0);
+    setText('k1', fmtK(total));
+    setText('k3', fmtK(Math.round(total*0.218)));
+  } else {
+    setText('k1', '68,884');
+    setText('k3', '14,998');
+  }
+}
+function sfInit() { sfRender(); }
+</script>
+
+    </div>
+  </main>
+</div>
+<script src="../js/common.js"></script>
+<script src="../js/sf_data.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  injectSalesShellLayout('sf_leads_detail');
+  sfInit();
+});
+</script>
+</body>
+</html>
