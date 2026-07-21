@@ -36,7 +36,7 @@
     .kpi-v.warn{color:#854f0b}
     .kpi-v.neg{color:#791f1f}
     .kpi-sub{font-size:11px;color:var(--text-muted);margin-top:3px}
-    .acct-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:1.5rem}
+    .acct-cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:1.5rem}
     .acct-card{background:var(--surface-1);border-radius:12px;border:0.5px solid var(--border);padding:14px 16px;cursor:pointer;transition:border-color .12s}
     .acct-card:hover{border-color:var(--border-strong)}
     .acct-card.selected{border-color:#0C447C;background:#E6F1FB}
@@ -204,7 +204,7 @@
     const projs={P1:'Society',P2:'Acclaim',P3:'Wedge Rd',P4:'River Valley'};
     const accounts=[
       {id:'OPA',name:'Operating account',code:'090',netBias:-950000,color:'#e34948'},
-      {id:'CLA',name:'Clearing account',code:'092',netBias:0,color:'#898781',dormant:true},
+      {id:'CLA',name:'Clearing account', code:'092',netBias:0,      color:'#898781',dormant:true},
     ];
     const contacts=['Ridgeway Homes Pty Ltd','ABC Civil Contractors','Bayside Developments','Landscape Plus Pty','Beck Legal Services','Greenfield Trust','Hamilton Smith Pty','Ridgeway Utilities','City Agency','PC Complete'];
     const fyears=[2021,2022,2023,2024,2025,2026];
