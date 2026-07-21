@@ -117,13 +117,7 @@
   <div class="kpi"><div class="kpi-l">Available</div><div class="kpi-v">182</div><div class="kpi-sub">status = Available</div></div>
   <div class="kpi"><div class="kpi-l">Titled</div><div class="kpi-v">1,991</div><div class="kpi-sub">849 untitled &bull; is_land_titled 100% populated</div></div>
 </div>
-<div class="dq mb-3" style="font-size:.78rem">
-  <strong>Data quality flags (raised to Grant):</strong>
-  362 lots: status=Sold but sales_stage=Unconditional Exchange.
-  8 lots: status=Available with active sales stage.
-  sold_date only 416/2,840 rows — use actual_settlement_date from sf_opportunity via purchasing_opportunity_id.
-  Exchange timestamp below comes from sf_opportunity joined via purchasing_opportunity_id (not stored on sf_lot).
-</div>
+
 <div class="sf-card">
   <div class="sf-ct"><h3>Lot Records</h3><span class="sf-sub">Exchange timestamp via purchasing_opportunity_id join &bull; sorted by exchange date descending</span></div>
   <div style="overflow-x:auto">

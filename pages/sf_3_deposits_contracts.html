@@ -118,9 +118,7 @@
           </select>
         </div>
       </div>
-<div class="sf-warn"><i class="fa-solid fa-triangle-exclamation fa-fw"></i>
-  <div><strong>Critical join direction:</strong> deposit/contract counts use sf_opportunity filtered on timestamps directly. Join via <code>Lot.purchasing_opportunity_id = Opportunity.opportunity_id</code> — not the reverse (causes ~8× overcount). See KPI doc §3.</div>
-</div>
+
 
 <div class="kpis mb-3">
   <div class="kpi"><div class="kpi-l">Deposits (period)</div><div class="kpi-v" id="k1">—</div><div class="kpi-sub">reserved_timestamp events</div></div>
