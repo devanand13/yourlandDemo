@@ -526,6 +526,230 @@ const ChartUtils = {
 
         this.registerInstance(canvasId, chart);
         return chart;
+    },
+
+    /**
+     * Builds a combined Stacked Bar + Line chart for Portfolio Cashflow Timeline.
+     */
+    createPortfolioCashflowTimelineChart(canvasId, labels, datasets) {
+        this.destroyInstance(canvasId);
+        const ctx = document.getElementById(canvasId);
+        if (!ctx) return null;
+
+        // Helper to align zero lines of left and right Y-axes
+        function getAlignedScales(leftMin, leftMax, rightMin, rightMax) {
+            leftMin = Math.min(0, leftMin);
+            leftMax = Math.max(0, leftMax);
+            rightMin = Math.min(0, rightMin);
+            rightMax = Math.max(0, rightMax);
+
+            if (leftMax === 0) leftMax = 1;
+            if (rightMax === 0) rightMax = 1;
+            if (leftMin === 0) leftMin = -1;
+            if (rightMin === 0) rightMin = -1;
+
+            const leftRatio = leftMin / leftMax;
+            const rightRatio = rightMin / rightMax;
+
+            let finalLeftMin = leftMin;
+            let finalRightMin = rightMin;
+
+            if (leftRatio < rightRatio) {
+                finalRightMin = rightMax * leftRatio;
+            } else if (rightRatio < leftRatio) {
+                finalLeftMin = leftMax * rightRatio;
+            }
+
+            const leftRange = leftMax - finalLeftMin;
+            const rightRange = rightMax - finalRightMin;
+
+            return {
+                minY: finalLeftMin - leftRange * 0.05,
+                maxY: leftMax + leftRange * 0.05,
+                minY2: finalRightMin - rightRange * 0.05,
+                maxY2: rightMax + rightRange * 0.05
+            };
+        }
+
+        // Helper to calculate scales based on current dataset visibility
+        function calculateScales(chartLabels, chartDatasets, getMetaCallback) {
+            const numDataPoints = chartLabels.length;
+            const posSums = new Array(numDataPoints).fill(0);
+            const negSums = new Array(numDataPoints).fill(0);
+
+            chartDatasets.forEach((ds, dsIndex) => {
+                if (ds.type === 'bar') {
+                    const meta = getMetaCallback ? getMetaCallback(dsIndex) : null;
+                    const isHidden = meta ? meta.hidden : ds.hidden;
+                    if (!isHidden) {
+                        for (let i = 0; i < numDataPoints; i++) {
+                            const val = ds.data[i] || 0;
+                            if (val > 0) posSums[i] += val;
+                            else negSums[i] += val;
+                        }
+                    }
+                }
+            });
+
+            const leftMax = Math.max(...posSums, 0);
+            const leftMin = Math.min(...negSums, 0);
+
+            const lineDataset = chartDatasets.find(ds => ds.type === 'line');
+            const rightMax = lineDataset ? Math.max(...lineDataset.data, 0) : 0;
+            const rightMin = lineDataset ? Math.min(...lineDataset.data, 0) : 0;
+
+            return getAlignedScales(leftMin, leftMax, rightMin, rightMax);
+        }
+
+        // Calculate initial scales
+        const initialScales = calculateScales(labels, datasets, null);
+
+        const chart = new Chart(ctx, {
+            type: 'bar', // default type, can be overridden per dataset
+            data: {
+                labels: labels,
+                datasets: datasets
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            boxWidth: 10,
+                            font: { size: 10, weight: '500' }
+                        },
+                        onClick: (e, legendItem, legend) => {
+                            const index = legendItem.datasetIndex;
+                            const chart = legend.chart;
+                            const clickedDataset = chart.data.datasets[index];
+                            
+                            const meta = chart.getDatasetMeta(index);
+                            meta.hidden = meta.hidden === null ? !clickedDataset.hidden : null;
+                            
+                            if (clickedDataset.type === 'bar') {
+                                // Recalculate cumulative cashflows for the visible project datasets
+                                const lineDataset = chart.data.datasets.find(ds => ds.type === 'line');
+                                if (lineDataset) {
+                                    const numDataPoints = chart.data.labels.length;
+                                    const newCumulativeData = new Array(numDataPoints).fill(0);
+                                    
+                                    let runningTotal = 0;
+                                    for (let i = 0; i < numDataPoints; i++) {
+                                        let monthlySum = 0;
+                                        chart.data.datasets.forEach((ds, dsIndex) => {
+                                            if (ds.type === 'bar') {
+                                                const meta = chart.getDatasetMeta(dsIndex);
+                                                if (!meta.hidden) {
+                                                    monthlySum += ds.data[i] || 0;
+                                                }
+                                            }
+                                        });
+                                        runningTotal += monthlySum;
+                                        newCumulativeData[i] = runningTotal;
+                                    }
+                                    lineDataset.data = newCumulativeData;
+                                }
+                            }
+
+                            // Re-align zero lines based on current visibility state
+                            const newScales = calculateScales(chart.data.labels, chart.data.datasets, (idx) => chart.getDatasetMeta(idx));
+                            chart.options.scales.y.min = newScales.minY;
+                            chart.options.scales.y.max = newScales.maxY;
+                            chart.options.scales.ySecondary.min = newScales.minY2;
+                            chart.options.scales.ySecondary.max = newScales.maxY2;
+                            
+                            chart.update();
+                        }
+                    },
+                    tooltip: {
+                        filter: (tooltipItem) => tooltipItem.dataset.type === 'bar',
+                        callbacks: {
+                            label: (context) => {
+                                const val = context.raw;
+                                const formattedVal = val >= 0 ? `+${formatCurrency(val)}` : formatCurrency(val);
+                                return ` ${context.dataset.label}: ${formattedVal}`;
+                            },
+                            afterBody: (context) => {
+                                const dataIndex = context[0].dataIndex;
+                                const chart = context[0].chart;
+                                
+                                let monthlyTotal = 0;
+                                chart.data.datasets.forEach(ds => {
+                                    if (ds.type === 'bar') {
+                                        const meta = chart.getDatasetMeta(chart.data.datasets.indexOf(ds));
+                                        if (!meta.hidden) {
+                                            monthlyTotal += ds.data[dataIndex] || 0;
+                                        }
+                                    }
+                                });
+                                
+                                const lineDataset = chart.data.datasets.find(ds => ds.type === 'line');
+                                const cumulativeTotal = lineDataset ? lineDataset.data[dataIndex] : 0;
+                                
+                                const formattedMonthly = monthlyTotal >= 0 ? `+${formatCurrency(monthlyTotal)}` : formatCurrency(monthlyTotal);
+                                const formattedCumulative = cumulativeTotal >= 0 ? `+${formatCurrency(cumulativeTotal)}` : formatCurrency(cumulativeTotal);
+                                
+                                return [
+                                    '----------------------------',
+                                    `Portfolio Monthly Cashflow: ${formattedMonthly}`,
+                                    `Portfolio Cumulative Cashflow: ${formattedCumulative}`
+                                ];
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: {
+                            display: true,
+                            color: '#E5E5E5'
+                        }
+                    },
+                    y: {
+                        stacked: true,
+                        type: 'linear',
+                        position: 'left',
+                        min: initialScales.minY,
+                        max: initialScales.maxY,
+                        grid: {
+                            color: (context) => context.tick && context.tick.value === 0 ? '#595959' : '#E5E5E5',
+                            lineWidth: (context) => context.tick && context.tick.value === 0 ? 2 : 1
+                        },
+                        ticks: {
+                            callback: (val) => formatCurrency(val)
+                        },
+                        title: {
+                            display: true,
+                            text: 'Cashflow Amount ($)',
+                            font: { weight: 'bold' }
+                        }
+                    },
+                    ySecondary: {
+                        stacked: false,
+                        type: 'linear',
+                        position: 'right',
+                        min: initialScales.minY2,
+                        max: initialScales.maxY2,
+                        grid: {
+                            drawOnChartArea: false
+                        },
+                        ticks: {
+                            callback: (val) => formatCurrency(val)
+                        },
+                        title: {
+                            display: true,
+                            text: 'Portfolio Cumulative Cashflow ($)',
+                            font: { weight: 'bold' }
+                        }
+                    }
+                }
+            }
+        });
+
+        this.registerInstance(canvasId, chart);
+        return chart;
     }
 };
 

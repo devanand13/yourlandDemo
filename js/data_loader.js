@@ -25,21 +25,35 @@ const DataLoader = {
                 // Since this JS will be executed in pages/ subfolder, data files are up one level
                 const baseDir = '../data';
                 
-                const [projectsRes, stagesRes, cashflowRes, kpisRes] = await Promise.all([
-                    fetch(`${baseDir}/projects.json`),
-                    fetch(`${baseDir}/stages.json`),
-                    fetch(`${baseDir}/cashflow.json`),
-                    fetch(`${baseDir}/kpis.json`)
-                ]);
+                if (window.location.protocol === 'file:') {
+                    // Load scripts dynamically to bypass local file CORS constraints
+                    await Promise.all([
+                        this.loadScript(`${baseDir}/projects.js`),
+                        this.loadScript(`${baseDir}/stages.js`),
+                        this.loadScript(`${baseDir}/cashflow.js`),
+                        this.loadScript(`${baseDir}/kpis.js`)
+                    ]);
+                    this._projects = window.projectsData;
+                    this._stages = window.stagesData;
+                    this._cashflow = window.cashflowData;
+                    this._kpis = window.kpisData;
+                } else {
+                    const [projectsRes, stagesRes, cashflowRes, kpisRes] = await Promise.all([
+                        fetch(`${baseDir}/projects.json`),
+                        fetch(`${baseDir}/stages.json`),
+                        fetch(`${baseDir}/cashflow.json`),
+                        fetch(`${baseDir}/kpis.json`)
+                    ]);
 
-                if (!projectsRes.ok || !stagesRes.ok || !cashflowRes.ok || !kpisRes.ok) {
-                    throw new Error('One or more data files failed to load. Check paths.');
+                    if (!projectsRes.ok || !stagesRes.ok || !cashflowRes.ok || !kpisRes.ok) {
+                        throw new Error('One or more data files failed to load. Check paths.');
+                    }
+
+                    this._projects = await projectsRes.json();
+                    this._stages = await stagesRes.json();
+                    this._cashflow = await cashflowRes.json();
+                    this._kpis = await kpisRes.json();
                 }
-
-                this._projects = await projectsRes.json();
-                this._stages = await stagesRes.json();
-                this._cashflow = await cashflowRes.json();
-                this._kpis = await kpisRes.json();
 
                 console.log('DataLoader: All data loaded and cached successfully.', {
                     projects: this._projects.length,
@@ -62,6 +76,16 @@ const DataLoader = {
         })();
 
         return this._loadPromise;
+    },
+
+    loadScript(src) {
+        return new Promise((resolve, reject) => {
+            const script = document.createElement('script');
+            script.src = src;
+            script.onload = () => resolve();
+            script.onerror = () => reject(new Error(`Failed to load script: ${src}`));
+            document.head.appendChild(script);
+        });
     },
 
     getProjects() {

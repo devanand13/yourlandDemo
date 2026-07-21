@@ -85,10 +85,10 @@
                 <span class="proj-lbl"><i class="ti ti-building" style="font-size:13px;vertical-align:-1px;margin-right:3px" aria-hidden="true"></i>Project</span>
                 <select id="projectSelect" onchange="selectProject(this.value)">
                   <option value="all">All projects</option>
-                  <option value="P1">Ridgeway Estate</option>
-                  <option value="P2">Bayside Gardens</option>
-                  <option value="P3">North Haven</option>
-                  <option value="P4">Greenfield Park</option>
+                  <option value="P1">Society</option>
+                  <option value="P2">Acclaim</option>
+                  <option value="P3">Wedge Rd</option>
+                  <option value="P4">River Valley</option>
                 </select>
               </div>
 
@@ -146,7 +146,7 @@
       return sign + '$' + Math.abs(r).toLocaleString() + ' vs prior mo.';
     }
 
-    const projects = {P1:'Ridgeway Estate', P2:'Bayside Gardens', P3:'North Haven', P4:'Greenfield Park'};
+    const projects = {P1:'Society', P2:'Acclaim', P3:'Wedge Rd', P4:'River Valley'};
     const projectScale = {P1:1.4, P2:1.0, P3:0.7, P4:0.5};
     const monthLabels = ['Apr 2025','May 2025','Jun 2025','Jul 2025','Aug 2025','Sep 2025','Oct 2025','Nov 2025','Dec 2025','Jan 2026','Feb 2026','Mar 2026'];
     const monthShort = monthLabels.map(m => {

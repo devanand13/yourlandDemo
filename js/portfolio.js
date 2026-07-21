@@ -60,6 +60,15 @@ function renderPortfolioPage() {
     // 3. Render the cross-project comparison charts
     renderComparisonCharts();
 
+    // 3a. Update Portfolio KPI Cards
+    renderPortfolioKPIs();
+
+    // 3b. Render Portfolio-level Aggregated Charts
+    renderPortfolioAggregatedCharts();
+
+    // 3c. Render Portfolio Cashflow Timeline Chart
+    renderPortfolioCashflowTimelineChart();
+
     // 4. Render the sortable table body
     renderPortfolioTableBody();
 }
@@ -278,4 +287,202 @@ function setupChartSortControls() {
             renderComparisonCharts();
         });
     });
+}
+
+/**
+ * Renders the aggregated KPIs for the portfolio.
+ */
+function renderPortfolioKPIs() {
+    const totalProfit = portfolioDataCached.reduce((sum, r) => sum + (r.profit || 0), 0);
+    const totalRevenue = portfolioDataCached.reduce((sum, r) => sum + (r.revenue || 0), 0);
+    const avgMargin = totalRevenue > 0 ? (totalProfit / totalRevenue) * 100 : 0;
+
+    const profitEl = document.getElementById('portfolio-kpi-profit');
+    const marginEl = document.getElementById('portfolio-kpi-margin');
+
+    if (profitEl) profitEl.textContent = formatCurrency(totalProfit);
+    if (marginEl) marginEl.textContent = formatPercent(avgMargin);
+}
+
+/**
+ * Renders the portfolio level aggregated charts.
+ */
+function renderPortfolioAggregatedCharts() {
+    const projectCodes = portfolioDataCached.map(p => p.projectCode);
+    const cashflows = DataLoader.getCashflow();
+    const budget = AppState.getFilter('budget');
+    const filteredCashflow = cashflows.filter(c => projectCodes.includes(c.ProjectCode) && c.Scenario === budget);
+
+    // 1. Stacked Yearly Revenue vs Cost Chart
+    let labels = [];
+    let revenueDataSets = { sales: [], rental: [], other: [] };
+    let costDataSets = {
+        land: [], construction: [], infrastructure: [], professional: [],
+        statutory: [], landscaping: [], selling: [], marketing: [], finance: [], operating: []
+    };
+
+    const years = [...new Set(filteredCashflow.map(c => c.Year))].sort((a, b) => a - b);
+    labels = years;
+
+    years.forEach(yr => {
+        const yrRows = filteredCashflow.filter(c => c.Year === yr);
+
+        revenueDataSets.sales.push(yrRows.reduce((sum, r) => sum + (r.SalesRevenue || 0), 0));
+        revenueDataSets.rental.push(yrRows.reduce((sum, r) => sum + (r.RentalIncome || 0), 0));
+        revenueDataSets.other.push(yrRows.reduce((sum, r) => sum + (r.OtherIncome || 0), 0));
+
+        costDataSets.land.push(yrRows.reduce((sum, r) => sum + (r.LandCost || 0), 0));
+        costDataSets.construction.push(yrRows.reduce((sum, r) => sum + (r.ConstructionCost || 0), 0));
+        costDataSets.infrastructure.push(yrRows.reduce((sum, r) => sum + (r.InfrastructureCost || 0), 0));
+        costDataSets.professional.push(yrRows.reduce((sum, r) => sum + (r.ProfessionalFees || 0), 0));
+        costDataSets.statutory.push(yrRows.reduce((sum, r) => sum + (r.StatutoryFees || 0), 0));
+        costDataSets.landscaping.push(yrRows.reduce((sum, r) => sum + (r.LandscapingCost || 0), 0));
+        costDataSets.selling.push(yrRows.reduce((sum, r) => sum + (r.SellingCost || 0), 0));
+        costDataSets.marketing.push(yrRows.reduce((sum, r) => sum + (r.MarketingCost || 0), 0));
+        costDataSets.finance.push(yrRows.reduce((sum, r) => sum + (r.FinanceCost || 0), 0));
+        costDataSets.operating.push(yrRows.reduce((sum, r) => sum + (r.OperatingCost || 0), 0));
+    });
+
+    const chartDatasets = [
+        { label: 'Sales Revenue', data: revenueDataSets.sales, backgroundColor: '#1F4E79', stack: 'revenue' },
+        { label: 'Rental Income', data: revenueDataSets.rental, backgroundColor: '#2F75B5', stack: 'revenue' },
+        { label: 'Other Income', data: revenueDataSets.other, backgroundColor: '#9BC2E6', stack: 'revenue' },
+        { label: 'Land Cost', data: costDataSets.land, backgroundColor: '#C65911', stack: 'cost' },
+        { label: 'Construction', data: costDataSets.construction, backgroundColor: '#F58220', stack: 'cost' },
+        { label: 'Infrastructure', data: costDataSets.infrastructure, backgroundColor: '#ED7D31', stack: 'cost' },
+        { label: 'Professional Fees', data: costDataSets.professional, backgroundColor: '#F8CBAD', stack: 'cost' },
+        { label: 'Statutory Fees', data: costDataSets.statutory, backgroundColor: '#7F7F7F', stack: 'cost' },
+        { label: 'Landscaping', data: costDataSets.landscaping, backgroundColor: '#A6A6A6', stack: 'cost' },
+        { label: 'Selling', data: costDataSets.selling, backgroundColor: '#2E7D32', stack: 'cost' },
+        { label: 'Marketing', data: costDataSets.marketing, backgroundColor: '#70AD47', stack: 'cost' },
+        { label: 'Finance Costs', data: costDataSets.finance, backgroundColor: '#FFC000', stack: 'cost' },
+        { label: 'Operating Costs', data: costDataSets.operating, backgroundColor: '#D9D9D9', stack: 'cost' }
+    ];
+
+    ChartUtils.createDoubleStackedChart('revenueCostStackedChart', labels, chartDatasets);
+
+    // 2. Revenue Composition Donut Chart
+    const totalSales = filteredCashflow.reduce((s, r) => s + (r.SalesRevenue || 0), 0);
+    const totalRental = filteredCashflow.reduce((s, r) => s + (r.RentalIncome || 0), 0);
+    const totalOther = filteredCashflow.reduce((s, r) => s + (r.OtherIncome || 0), 0);
+    ChartUtils.createDonutChart('revenueCompositionChart', ['Sales Revenue', 'Rental Income', 'Other Income'], [totalSales, totalRental, totalOther]);
+
+    // 3. Cost Composition Donut Chart
+    const totalLand = filteredCashflow.reduce((s, r) => s + (r.LandCost || 0), 0);
+    const totalConst = filteredCashflow.reduce((s, r) => s + (r.ConstructionCost || 0), 0);
+    const totalInfra = filteredCashflow.reduce((s, r) => s + (r.InfrastructureCost || 0), 0);
+    const totalProf = filteredCashflow.reduce((s, r) => s + (r.ProfessionalFees || 0), 0);
+    const totalStat = filteredCashflow.reduce((s, r) => s + (r.StatutoryFees || 0), 0);
+    const totalScape = filteredCashflow.reduce((s, r) => s + (r.LandscapingCost || 0), 0);
+    const totalSell = filteredCashflow.reduce((s, r) => s + (r.SellingCost || 0), 0);
+    const totalMktg = filteredCashflow.reduce((s, r) => s + (r.MarketingCost || 0), 0);
+    const totalFin = filteredCashflow.reduce((s, r) => s + (r.FinanceCost || 0), 0);
+    const totalOper = filteredCashflow.reduce((s, r) => s + (r.OperatingCost || 0), 0);
+
+    const costLabels = ['Land', 'Construction', 'Infrastructure', 'Professional', 'Statutory', 'Landscaping', 'Selling', 'Marketing', 'Finance', 'Operating'];
+    const costValues = [totalLand, totalConst, totalInfra, totalProf, totalStat, totalScape, totalSell, totalMktg, totalFin, totalOper];
+    ChartUtils.createDonutChart('costCompositionChart', costLabels, costValues);
+}
+
+/**
+ * Renders the Portfolio Cashflow Timeline chart (combined Stacked Bar + Line chart).
+ */
+function renderPortfolioCashflowTimelineChart() {
+    const canvasId = 'portfolioCashflowTimelineChart';
+    const canvas = document.getElementById(canvasId);
+    const emptyState = document.getElementById('portfolioTimelineEmptyState');
+    
+    if (!canvas) return;
+    
+    const projectCodes = portfolioDataCached.map(p => p.projectCode);
+    const cashflows = DataLoader.getCashflow();
+    const budget = AppState.getFilter('budget');
+    const filteredCashflow = cashflows.filter(c => projectCodes.includes(c.ProjectCode) && c.Scenario === budget);
+    
+    // Check if we have active projects and cashflow data
+    if (projectCodes.length === 0 || filteredCashflow.length === 0) {
+        if (emptyState) emptyState.classList.remove('d-none');
+        canvas.classList.add('d-none');
+        ChartUtils.destroyInstance(canvasId);
+        return;
+    }
+    
+    // Get unique sorted periods
+    const periods = [...new Set(filteredCashflow.map(c => c.Period))].sort((a, b) => a - b);
+    
+    if (periods.length === 0) {
+        if (emptyState) emptyState.classList.remove('d-none');
+        canvas.classList.add('d-none');
+        ChartUtils.destroyInstance(canvasId);
+        return;
+    }
+    
+    // Hide empty state if data exists
+    if (emptyState) emptyState.classList.add('d-none');
+    canvas.classList.remove('d-none');
+    
+    // Build X-axis labels
+    const labels = [];
+    periods.forEach(p => {
+        const row = filteredCashflow.find(c => c.Period === p);
+        if (row) {
+            labels.push(`${row.MonthName} ${row.Year}`);
+        } else {
+            labels.push(`P${p}`);
+        }
+    });
+    
+    const datasets = [];
+    const monthlyTotals = new Array(periods.length).fill(0);
+    
+    // Build project-level monthly cashflow datasets
+    portfolioDataCached.forEach((proj, idx) => {
+        const projData = [];
+        periods.forEach((p, pIdx) => {
+            const row = filteredCashflow.find(c => c.ProjectCode === proj.projectCode && c.Period === p);
+            const val = row ? (row.Cashflow || 0) : 0;
+            projData.push(val);
+            monthlyTotals[pIdx] += val;
+        });
+        
+        const color = ChartColors.palette[idx % ChartColors.palette.length];
+        
+        datasets.push({
+            type: 'bar',
+            label: proj.projectName,
+            data: projData,
+            backgroundColor: color,
+            borderColor: color,
+            borderWidth: 1,
+            stack: 'cashflow',
+            yAxisID: 'y'
+        });
+    });
+    
+    // Calculate running cumulative cashflow total (running total of monthly portfolio sums)
+    let runningTotal = 0;
+    const cumulativeData = [];
+    monthlyTotals.forEach(val => {
+        runningTotal += val;
+        cumulativeData.push(runningTotal);
+    });
+    
+    // Append cumulative cashflow line dataset
+    datasets.push({
+        type: 'line',
+        label: 'Portfolio Cumulative Cashflow',
+        data: cumulativeData,
+        borderColor: ChartColors.blue, // Deep corporate blue
+        borderWidth: 3,
+        tension: 0.3,
+        pointBackgroundColor: '#FFFFFF',
+        pointBorderColor: ChartColors.blue,
+        pointBorderWidth: 2,
+        pointRadius: 4,
+        pointHoverRadius: 6,
+        fill: false,
+        yAxisID: 'ySecondary'
+    });
+    
+    ChartUtils.createPortfolioCashflowTimelineChart(canvasId, labels, datasets);
 }

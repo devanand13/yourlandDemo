@@ -96,10 +96,10 @@
                   <span class="ctrl-lbl">Project</span>
                   <select id="projectSelect" onchange="changeProj(this.value)">
                     <option value="all">All projects</option>
-                    <option value="P1">Ridgeway Estate</option>
-                    <option value="P2">Bayside Gardens</option>
-                    <option value="P3">North Haven</option>
-                    <option value="P4">Greenfield Park</option>
+                    <option value="P1">Society</option>
+                    <option value="P2">Acclaim</option>
+                    <option value="P3">Wedge Rd</option>
+                    <option value="P4">River Valley</option>
                   </select>
                 </div>
                 <div class="ctrl-row">
@@ -183,7 +183,7 @@
     function fmtM(n){if(n==null||n===0)return'—';const a=Math.abs(n);return(n<0?'-':'')+'$'+(a>=1e6?(a/1e6).toFixed(2)+'M':(a/1e3).toFixed(1)+'k');}
     function rnd(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
 
-    const projs={P1:'Ridgeway Estate',P2:'Bayside Gardens',P3:'North Haven',P4:'Greenfield Park'};
+    const projs={P1:'Society',P2:'Acclaim',P3:'Wedge Rd',P4:'River Valley'};
     const stages=['Stage 1','Stage 2','Stage 3','Stage 4'];
     const contacts=['Ridgeway Homes Pty Ltd','Bayside Developments','Greenfield Trust','Hamilton Smith Pty','City Agency','Maddox Group','Brunswick Holdings','Southside Property Trust','North Estate Pty Ltd','Victoria Land Co','Park Avenue Dev','Harbour View Pty','Eastside Homes','Westfield Estates','Bayview Holdings','Summit Property Group','Lakeside Dev','Riverside Pty Ltd','Metro Holdings','Coast Developments'];
     const ranges={'Stage 1':{min:320,max:580},'Stage 2':{min:280,max:520},'Stage 3':{min:350,max:620},'Stage 4':{min:290,max:540}};

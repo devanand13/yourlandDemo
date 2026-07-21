@@ -7,7 +7,8 @@ const AppState = {
         projectCode: 100,
         budget: 'CurrentBudget',
         status: 'All',
-        year: 'All'
+        year: 'All',
+        portfolio: 'NTT'
     },
     _listeners: [],
 
@@ -29,6 +30,7 @@ const AppState = {
         this._filters.budget = this._filters.budget || 'CurrentBudget';
         this._filters.status = this._filters.status || 'All';
         this._filters.year = this._filters.year || 'All';
+        this._filters.portfolio = this._filters.portfolio || 'NTT';
 
         console.log('AppState: State initialized', this._filters);
     },
@@ -159,10 +161,13 @@ const AppState = {
         const kpis = DataLoader.getKPIs();
         const stages = DataLoader.getStages();
         
-        // Filter projects by status
+        // Filter projects by status and portfolio
         let filteredProjects = projects;
         if (this._filters.status !== 'All') {
-            filteredProjects = projects.filter(p => p.Status === this._filters.status);
+            filteredProjects = filteredProjects.filter(p => p.Status === this._filters.status);
+        }
+        if (this._filters.portfolio && this._filters.portfolio !== 'All') {
+            filteredProjects = filteredProjects.filter(p => p.Portfolio === this._filters.portfolio);
         }
 
         return filteredProjects.map(proj => {

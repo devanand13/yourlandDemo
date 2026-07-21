@@ -224,22 +224,41 @@ function injectShellLayout(activePage) {
             `;
         } else {
             const pageTitle = ESTATE_PAGES[activePage] ? ESTATE_PAGES[activePage].title : 'Dashboard';
-            topNavbar.innerHTML = `
-                <div class="top-navbar-left">
-                    <h1 class="page-title-heading">${pageTitle}</h1>
-                </div>
-                
-                <div class="nav-filters">
-                    <div class="filter-group">
-                        <label for="projectSelect">Project</label>
-                        <select id="projectSelect" class="filter-select"></select>
+            if (activePage === 'portfolio') {
+                topNavbar.innerHTML = `
+                    <div class="top-navbar-left">
+                        <h1 class="page-title-heading">${pageTitle}</h1>
                     </div>
-                    <div class="filter-group">
-                        <label for="budgetSelect">Budget</label>
-                        <select id="budgetSelect" class="filter-select"></select>
+                    
+                    <div class="nav-filters">
+                        <div class="filter-group">
+                            <label for="portfolioSelect">Portfolio</label>
+                            <select id="portfolioSelect" class="filter-select"></select>
+                        </div>
+                        <div class="filter-group">
+                            <label for="budgetSelect">Budget</label>
+                            <select id="budgetSelect" class="filter-select"></select>
+                        </div>
                     </div>
-                </div>
-            `;
+                `;
+            } else {
+                topNavbar.innerHTML = `
+                    <div class="top-navbar-left">
+                        <h1 class="page-title-heading">${pageTitle}</h1>
+                    </div>
+                    
+                    <div class="nav-filters">
+                        <div class="filter-group">
+                            <label for="projectSelect">Project</label>
+                            <select id="projectSelect" class="filter-select"></select>
+                        </div>
+                        <div class="filter-group">
+                            <label for="budgetSelect">Budget</label>
+                            <select id="budgetSelect" class="filter-select"></select>
+                        </div>
+                    </div>
+                `;
+            }
         }
     }
 
@@ -461,10 +480,10 @@ function injectChatbotWidget() {
         {
             id: 1,
             question: "1. What is our portfolio composition and total locked capital?",
-            answer: "Our active portfolio consists of 14 major projects. Under the Current Budget: 3 Completed (Stone Ridge, Oak Meadows, Acclaim), 3 in Construction (Evergreen, Highlands, Green Fields), 3 in Planning (Parkview Estate, Marran Run, The Junction), 3 in Feasibility (River Valley, Wedge Rd, Seventh), and 2 Selling (Lakeside, Kings Quarter). Additionally, we have 5 projects currently <strong>On Hold</strong>: Brookside, Hillcrest, Officer North, Northgate, and Westbrook. The total revenue locked in 'On Hold' projects stands at a substantial <strong>$1.134B</strong>.",
+            answer: "Our active portfolio consists of 15 projects (14 unique models). Under the Current Budget: 3 Completed (South Morang, Test Model Exclude, Acclaim), 3 in Construction (Camerons Lane, Lavenia Road, The Patch), 4 in Planning (Torquay SC, Marran Run, Society, Sunbury), 3 in Feasibility (River Valley, Wedge Rd, Seventh Bend), and 1 Selling (Rix Road). Additionally, we have 1 project currently <strong>On Hold</strong>: Officer North - Bonview. The total revenue locked in 'On Hold' projects stands at <strong>$123.03M</strong>.",
             followup: {
                 question: "↳ Q1 Follow-up: Which projects drive this locked capital, and what is the reactivation plan?",
-                answer: "The largest contributors to our on-hold capital are <strong>Brookside</strong> ($338M, Victoria, Mixed Use) and <strong>Hillcrest</strong> ($266M, Victoria, Commercial). The executive committee is actively evaluating Joint Venture (JV) equity partners to mitigate risk and peak exposure, and is restructuring project timelines to align with more favorable interest rate cycles."
+                answer: "The only project currently on hold is <strong>Officer North - Bonview</strong> ($123.03M, New South Wales, Residential). The executive committee is actively evaluating Joint Venture (JV) equity partners to mitigate risk and peak exposure, and is restructuring project timelines to align with more favorable interest rate cycles."
             }
         },
         {
@@ -479,28 +498,28 @@ function injectChatbotWidget() {
         {
             id: 3,
             question: "3. Which active construction project has the highest IRR?",
-            answer: "We currently have three projects in active construction. Under the Current Budget:<br>• <strong>Evergreen</strong> (Victoria, Residential) leads with a Project IRR of <strong>9.02%</strong> (Margin: 17.74%, Profit: $55.73M).<br>• <strong>Highlands</strong> (NSW, Commercial) has an IRR of <strong>7.33%</strong> (Margin: 13.88%, Profit: $40.26M).<br>• <strong>Green Fields</strong> (NSW, Mixed Use) has an IRR of <strong>5.62%</strong> (Margin: 13.55%, Profit: $31.15M).<br>Consequently, <strong>Evergreen</strong> is our top-performing active construction asset by IRR, Profit, and Margin.",
+            answer: "We currently have three projects in active construction. Under the Current Budget:<br>• <strong>Camerons Lane</strong> (Victoria, Residential) leads with a Project IRR of <strong>9.02%</strong> (Margin: 17.74%, Profit: $55.73M).<br>• <strong>Lavenia Road</strong> (NSW, Commercial) has an IRR of <strong>7.33%</strong> (Margin: 13.88%, Profit: $40.26M).<br>• <strong>The Patch</strong> (NSW, Mixed Use) has an IRR of <strong>5.62%</strong> (Margin: 13.55%, Profit: $31.15M).<br>Consequently, <strong>Camerons Lane</strong> is our top-performing active construction asset by IRR, Profit, and Margin.",
             followup: {
                 question: "↳ Q3 Follow-up: What are the peak cash requirements and remaining durations for these assets?",
-                answer: "Peak equity exposures are <strong>$89.83M</strong> for Evergreen (occurring at Period 95), <strong>$88.26M</strong> for Highlands (Period 50), and <strong>$70.13M</strong> for Green Fields (Period 76). Evergreen is a longer-term asset (running from Period 48 to 128) with a breakeven target at Period 122, leaving a safe 6-period tail buffer."
+                answer: "Peak equity exposures are <strong>$89.83M</strong> for Camerons Lane (occurring at Period 95), <strong>$88.26M</strong> for Lavenia Road (Period 50), and <strong>$70.13M</strong> for The Patch (Period 76). Camerons Lane is a longer-term asset (running from Period 48 to 128) with a breakeven target at Period 122, leaving a safe 6-period tail buffer."
             }
         },
         {
             id: 4,
             question: "4. How did our completed projects perform against original feasibility?",
-            answer: "All three completed projects experienced cost pressures that compressed margins compared to original feasibility:<br>• <strong>Stone Ridge</strong> (Project 200, Commercial): Profit of <strong>$68.58M</strong> / Margin of <strong>20.55%</strong> (original target: $81.45M / 25.77%).<br>• <strong>Oak Meadows</strong> (Project 450, Mixed Use): Profit of <strong>$59.57M</strong> / Margin of <strong>17.87%</strong> (original target: $73.93M / 23.38%).<br>• <strong>Acclaim</strong> (Project 800, Commercial): Profit of <strong>$67.08M</strong> / Margin of <strong>21.40%</strong> (original target: $79.99M / 26.84%).",
+            answer: "All three completed projects experienced cost pressures that compressed margins compared to original feasibility:<br>• <strong>South Morang</strong> (Project 1180, Commercial): Profit of <strong>$68.58M</strong> / Margin of <strong>20.55%</strong> (original target: $81.45M / 25.77%).<br>• <strong>Officer Fields - BJR</strong> (Project 800, Mixed Use): Profit of <strong>$59.57M</strong> / Margin of <strong>17.87%</strong> (original target: $73.93M / 23.38%).<br>• <strong>Acclaim</strong> (Project 800, Commercial): Profit of <strong>$67.08M</strong> / Margin of <strong>21.40%</strong> (original target: $79.99M / 26.84%).",
             followup: {
                 question: "↳ Q4 Follow-up: What were the peak equity exposures for these completed projects?",
-                answer: "Peak equity exposures reached <strong>$91.22M</strong> for Stone Ridge (Period 69), <strong>$95.20M</strong> for Oak Meadows (Period 62), and <strong>$84.51M</strong> for Acclaim (Period 107). These were higher than original feasibility estimates, representing increased cash requirements during active construction phases."
+                answer: "Peak equity exposures reached <strong>$91.22M</strong> for South Morang (Period 69), <strong>$95.20M</strong> for Officer Fields - BJR (Period 62), and <strong>$84.51M</strong> for Acclaim (Period 107). These were higher than original feasibility estimates, representing increased cash requirements during active construction phases."
             }
         },
         {
             id: 5,
             question: "5. How is our portfolio geographically distributed by revenue?",
-            answer: "Our portfolio's total revenue under Current Budget is geographically concentrated as follows:<br>• <strong>Victoria</strong>: Major driver of revenue with Brookside ($338M), Stone Ridge ($333M), Evergreen ($314M), and Lakeside ($228M).<br>• <strong>New South Wales</strong>: Driven by Oak Meadows ($333M), Highlands ($289M), Kings Quarter ($284M), and Westbrook ($208M).<br>• <strong>Queensland</strong>: Driven by Wedge Rd ($352M), Acclaim ($313M), Marran Run ($310M), and Northgate ($206M).",
+            answer: "Our portfolio's total revenue under Current Budget is geographically concentrated as follows:<br>• <strong>Victoria</strong>: Driven by South Morang ($333.74M), Camerons Lane ($314.07M), Sunbury ($281.04M), and Society ($261.82M).<br>• <strong>New South Wales</strong>: Driven by Officer Fields - BJR ($333.40M), Rix Road ($300.30M), Lavenia Road ($289.95M), and The Patch ($229.95M).<br>• <strong>Queensland</strong>: Driven by Wedge Rd ($352.72M), Acclaim ($313.43M), and Marran Run ($310.40M).",
             followup: {
                 question: "↳ Q5 Follow-up: What is the strategic priority for Queensland?",
-                answer: "The strategic focus in Queensland is the successful execution of <strong>Wedge Rd</strong> ($352M, Feasibility) and maintaining the strong performance of <strong>Acclaim</strong> ($313M, Completed), while seeking to reactivate <strong>Northgate</strong> ($206M, On Hold) to balance geographical returns."
+                answer: "The strategic focus in Queensland is the successful execution of <strong>Wedge Rd</strong> ($352.72M, Feasibility) and maintaining the strong performance of <strong>Acclaim</strong> ($313.43M, Completed) and <strong>Marran Run</strong> ($310.40M, Planning)."
             }
         }
     ];

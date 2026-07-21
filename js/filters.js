@@ -5,6 +5,7 @@
 const FiltersController = {
     _statusSelect: null,
     _projectSelect: null,
+    _portfolioSelect: null,
     _budgetSelect: null,
     _yearSelect: null,
 
@@ -14,6 +15,7 @@ const FiltersController = {
     initializeFilters() {
         this._statusSelect = document.getElementById('statusSelect');
         this._projectSelect = document.getElementById('projectSelect');
+        this._portfolioSelect = document.getElementById('portfolioSelect');
         this._budgetSelect = document.getElementById('budgetSelect');
         this._yearSelect = document.getElementById('yearSelect');
 
@@ -24,10 +26,13 @@ const FiltersController = {
         if (!this._yearSelect) {
             AppState._filters.year = 'All';
         }
+        if (!this._portfolioSelect) {
+            AppState._filters.portfolio = 'All';
+        }
         AppState.save();
 
-        if (!this._projectSelect || !this._budgetSelect) {
-            console.error('FiltersController: Missing projectSelect or budgetSelect element in DOM.');
+        if (!this._budgetSelect) {
+            console.error('FiltersController: Missing budgetSelect element in DOM.');
             return;
         }
 
@@ -38,13 +43,16 @@ const FiltersController = {
         // 2. Populate Status list from projects data
         this.populateStatuses();
 
-        // 3. Populate Projects list (which respects current Status filter)
+        // 3. Populate Portfolios list if selector exists
+        this.populatePortfolios();
+
+        // 4. Populate Projects list if selector exists
         this.populateProjects();
 
-        // 4. Sync values from AppState to select elements
+        // 5. Sync values from AppState to select elements
         this.syncDropdownStates();
 
-        // 5. Register change listeners
+        // 6. Register change listeners
         this.bindEvents();
     },
 
@@ -82,10 +90,25 @@ const FiltersController = {
         this._statusSelect.innerHTML = html;
     },
 
+    populatePortfolios() {
+        if (!this._portfolioSelect) return;
+        const projects = DataLoader.getProjects();
+        // Unique portfolios sorted
+        const portfolios = [...new Set(projects.map(p => p.Portfolio))].filter(Boolean).sort();
+        
+        let html = portfolios
+            .map(pf => `<option value="${pf}">${pf}</option>`)
+            .join('');
+        html += '<option value="All">All</option>'; // The filter should have "All" option at end.
+        
+        this._portfolioSelect.innerHTML = html;
+    },
+
     /**
      * Re-populates the Project list based on current active status filter.
      */
     populateProjects() {
+        if (!this._projectSelect) return;
         const projects = DataLoader.getProjects();
         const currentStatus = this._statusSelect ? AppState.getFilter('status') : 'All';
         
@@ -115,6 +138,9 @@ const FiltersController = {
         }
         if (this._yearSelect) {
             this._yearSelect.value = AppState.getFilter('year');
+        }
+        if (this._portfolioSelect) {
+            this._portfolioSelect.value = AppState.getFilter('portfolio') || 'All';
         }
 
         // Re-populate Projects dropdown in case Status changed (cascade rule)
@@ -146,6 +172,12 @@ const FiltersController = {
         if (this._projectSelect) {
             this._projectSelect.addEventListener('change', (e) => {
                 AppState.setFilter('projectCode', e.target.value);
+            });
+        }
+
+        if (this._portfolioSelect) {
+            this._portfolioSelect.addEventListener('change', (e) => {
+                AppState.setFilter('portfolio', e.target.value);
             });
         }
 

@@ -24,6 +24,56 @@
         <!-- Dashboard Canvas -->
         <main class="dashboard-canvas">
             
+            <!-- Row 0: Portfolio KPI Cards -->
+            <div class="row g-3 mb-4">
+                <!-- Portfolio KPI 1: Portfolio Dev Profit -->
+                <div class="col-12 col-md-6 col-lg-3">
+                    <div class="kpi-card">
+                        <div class="kpi-header">
+                            <span class="kpi-label">Portfolio Dev Profit</span>
+                            <i class="fa-solid fa-hand-holding-dollar kpi-icon"></i>
+                        </div>
+                        <h2 id="portfolio-kpi-profit" class="kpi-value">--</h2>
+                        <div class="kpi-footer">
+                            <span class="kpi-subtext">Aggregated Profit</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Portfolio KPI 2: Portfolio Dev Margin -->
+                <div class="col-12 col-md-6 col-lg-3">
+                    <div class="kpi-card">
+                        <div class="kpi-header">
+                            <span class="kpi-label">Portfolio Dev Margin</span>
+                            <i class="fa-solid fa-percent kpi-icon"></i>
+                        </div>
+                        <h2 id="portfolio-kpi-margin" class="kpi-value">--</h2>
+                        <div class="kpi-footer">
+                            <span class="kpi-subtext">Aggregated Margin</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Row 0.5: Portfolio Cashflow Timeline -->
+            <div class="row g-3 mb-4">
+                <div class="col-12">
+                    <div class="card-master">
+                        <div class="card-title-bar">
+                            <h3>Portfolio Cashflow Timeline <span class="card-subtitle">Monthly cashflow contributions per project and cumulative portfolio cash position</span></h3>
+                            <i class="fa-solid fa-chart-line text-muted"></i>
+                        </div>
+                        <div class="chart-container-wrapper" style="height: 380px; position: relative;">
+                            <canvas id="portfolioCashflowTimelineChart"></canvas>
+                            <div id="portfolioTimelineEmptyState" class="text-center text-muted py-5 d-none" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 100%;">
+                                <i class="fa-solid fa-triangle-exclamation fs-3 mb-2 text-warning"></i>
+                                <p class="mb-0">No cashflow data available for the selected portfolio.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
             <!-- Row 1: Revenue by Project -->
             <div class="row g-3 mb-4">
                 <div class="col-12">
@@ -147,7 +197,51 @@
                 </div>
             </div>
 
-            <!-- Row 4: Detailed Comparison Table -->
+            <!-- Row 5: Aggregated Revenue vs Total Cost stacked column chart -->
+            <div class="row g-3 mb-4">
+                <div class="col-12">
+                    <div class="card-master">
+                        <div class="card-title-bar">
+                            <h3>Portfolio Revenue vs Total Cost <span class="card-subtitle">Yearly Stacked breakdown for selected portfolio</span></h3>
+                            <i class="fa-solid fa-chart-column text-muted"></i>
+                        </div>
+                        <div class="chart-container-wrapper" style="height: 320px;">
+                            <canvas id="revenueCostStackedChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Row 6: Aggregated Composition Donuts -->
+            <div class="row g-3 mb-4">
+                <!-- Portfolio Revenue Composition Donut -->
+                <div class="col-12 col-md-6">
+                    <div class="card-master">
+                        <div class="card-title-bar">
+                            <h3>Portfolio Revenue Composition <span class="card-subtitle">Source breakdown for selected portfolio</span></h3>
+                            <i class="fa-solid fa-pie-chart text-muted"></i>
+                        </div>
+                        <div class="chart-container-wrapper" style="height: 250px;">
+                            <canvas id="revenueCompositionChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Portfolio Cost Composition Donut -->
+                <div class="col-12 col-md-6">
+                    <div class="card-master">
+                        <div class="card-title-bar">
+                            <h3>Portfolio Cost Composition <span class="card-subtitle">Expense category breakdown for selected portfolio</span></h3>
+                            <i class="fa-solid fa-pie-chart text-muted"></i>
+                        </div>
+                        <div class="chart-container-wrapper" style="height: 250px;">
+                            <canvas id="costCompositionChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Row 7: Detailed Comparison Table -->
             <div class="row g-3">
                 <div class="col-12">
                     <div class="card-master">

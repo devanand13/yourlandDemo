@@ -93,10 +93,10 @@
                   <span class="ctrl-lbl">Project</span>
                   <select id="projectSelect" onchange="changeProj(this.value)">
                     <option value="all">All projects</option>
-                    <option value="P1">Ridgeway Estate</option>
-                    <option value="P2">Bayside Gardens</option>
-                    <option value="P3">North Haven</option>
-                    <option value="P4">Greenfield Park</option>
+                    <option value="P1">Society</option>
+                    <option value="P2">Acclaim</option>
+                    <option value="P3">Wedge Rd</option>
+                    <option value="P4">River Valley</option>
                   </select>
                 </div>
                 <div class="ctrl-row">
@@ -200,7 +200,7 @@
     function fmtM(n){if(n==null||n===0)return'—';const a=Math.abs(n);const s=n<0?'-':'';return s+'$'+(a>=1e6?(a/1e6).toFixed(2)+'M':(a/1e3).toFixed(0)+'k');}
     function rnd(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
 
-    const projs={P1:'Ridgeway Estate',P2:'Bayside Gardens',P3:'North Haven',P4:'Greenfield Park'};
+    const projs={P1:'Society',P2:'Acclaim',P3:'Wedge Rd',P4:'River Valley'};
     const accounts={BBA:'Business bank (090)',BSA:'Business savings (091)',OPA:'Operating (092)',TRA:'Trust (093)'};
     const acctKeys=Object.keys(accounts);
     const fyears=[2021,2022,2023,2024,2025,2026];

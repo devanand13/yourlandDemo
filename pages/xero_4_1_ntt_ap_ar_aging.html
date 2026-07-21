@@ -193,10 +193,10 @@ body{font-family:var(--font-sans);color:var(--ink);-webkit-font-smoothing:antial
   <div class="proj-row">
     <span class="proj-lbl"><i class="ti ti-building" style="font-size:13px;vertical-align:-1px;margin-right:3px" aria-hidden="true"></i>Project</span>
     <button class="pb on" onclick="agingSelectProject('all',this)">All agingProjects</button>
-    <button class="pb" onclick="agingSelectProject('P1',this)">Ridgeway Estate</button>
-    <button class="pb" onclick="agingSelectProject('P2',this)">Bayside Gardens</button>
-    <button class="pb" onclick="agingSelectProject('P3',this)">North Haven</button>
-    <button class="pb" onclick="agingSelectProject('P4',this)">Greenfield Park</button>
+    <button class="pb" onclick="agingSelectProject('P1',this)">Society</button>
+    <button class="pb" onclick="agingSelectProject('P2',this)">Acclaim</button>
+    <button class="pb" onclick="agingSelectProject('P3',this)">Wedge Rd</button>
+    <button class="pb" onclick="agingSelectProject('P4',this)">River Valley</button>
   </div>
 
   <div class="type-row">
@@ -247,10 +247,10 @@ function agingFmt(n){if(!n||n===0)return'—';return'$'+Math.round(n).toLocaleSt
 function agingFmtK(n){if(!n||n===0)return'—';const a=Math.abs(n);return(n<0?'-':'')+'$'+(a>=1000000?(a/1000000).toFixed(2)+'M':(a/1000).toFixed(1)+'k');}
 
 const agingProjects={
-  P1:{name:'Ridgeway Estate',tid:'02d26831-a0f0-4ae7-a2e7-a8a576775fdd'},
-  P2:{name:'Bayside Gardens',tid:'a9167fae-18a4-4dfc-91ec-04e896715447'},
-  P3:{name:'North Haven',tid:'f3c21a44-9b2e-4d7c-b8f1-6e3d5a2c9847'},
-  P4:{name:'Greenfield Park',tid:'d7e82b55-1c3f-4a8d-c9g2-7f4e6b3d0958'},
+  P1:{name:'Society',tid:'02d26831-a0f0-4ae7-a2e7-a8a576775fdd'},
+  P2:{name:'Acclaim',tid:'a9167fae-18a4-4dfc-91ec-04e896715447'},
+  P3:{name:'Wedge Rd',tid:'f3c21a44-9b2e-4d7c-b8f1-6e3d5a2c9847'},
+  P4:{name:'River Valley',tid:'d7e82b55-1c3f-4a8d-c9g2-7f4e6b3d0958'},
 };
 
 const agingArContacts=['Ridgeway Homes Pty Ltd','Bayside Developments','Greenfield Trust','Hamilton Smith Pty','City Agency','Maddox Group'];

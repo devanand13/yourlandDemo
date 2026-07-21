@@ -83,10 +83,10 @@
                 <span class="proj-lbl"><i class="ti ti-building" style="font-size:13px;vertical-align:-1px;margin-right:3px" aria-hidden="true"></i>Project</span>
                 <select id="projectSelect" onchange="changeProject(this.value)">
                   <option value="all">All projects</option>
-                  <option value="P1">Ridgeway Estate</option>
-                  <option value="P2">Bayside Gardens</option>
-                  <option value="P3">North Haven</option>
-                  <option value="P4">Greenfield Park</option>
+                  <option value="P1">Society</option>
+                  <option value="P2">Acclaim</option>
+                  <option value="P3">Wedge Rd</option>
+                  <option value="P4">River Valley</option>
                 </select>
               </div>
 
@@ -146,10 +146,10 @@
     function fmtK(n){if(!n||n===0)return'—';const a=Math.abs(n);return(n<0?'-':'')+'$'+(a>=1000000?(a/1000000).toFixed(2)+'M':(a/1000).toFixed(1)+'k');}
 
     const projects={
-      P1:{name:'Ridgeway Estate',tid:'02d26831-a0f0-4ae7-a2e7-a8a576775fdd'},
-      P2:{name:'Bayside Gardens',tid:'a9167fae-18a4-4dfc-91ec-04e896715447'},
-      P3:{name:'North Haven',tid:'f3c21a44-9b2e-4d7c-b8f1-6e3d5a2c9847'},
-      P4:{name:'Greenfield Park',tid:'d7e82b55-1c3f-4a8d-c9g2-7f4e6b3d0958'},
+      P1:{name:'Society',tid:'02d26831-a0f0-4ae7-a2e7-a8a576775fdd'},
+      P2:{name:'Acclaim',tid:'a9167fae-18a4-4dfc-91ec-04e896715447'},
+      P3:{name:'Wedge Rd',tid:'f3c21a44-9b2e-4d7c-b8f1-6e3d5a2c9847'},
+      P4:{name:'River Valley',tid:'d7e82b55-1c3f-4a8d-c9g2-7f4e6b3d0958'},
     };
 
     const arContacts=['Ridgeway Homes Pty Ltd','Bayside Developments','Greenfield Trust','Hamilton Smith Pty','City Agency','Maddox Group'];
